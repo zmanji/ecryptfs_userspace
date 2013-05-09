@@ -1,0 +1,42 @@
+\relax 
+\@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{1}}
+\@writefile{toc}{\contentsline {section}{\numberline {2}Threat Model}{2}}
+\citation{cryptfs}
+\citation{fist}
+\@writefile{toc}{\contentsline {section}{\numberline {3}Functional Overview}{3}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}VFS Objects}{3}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}VFS Operations}{3}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.2.1}Mount}{3}}
+\citation{rfc2440}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.2.2}File Open}{4}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.2.3}Page Read}{5}}
+\newlabel{page_read}{{3.2.3}{5}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.2.4}Page Write}{6}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.2.5}File Truncation}{6}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.2.6}File Close}{6}}
+\@writefile{toc}{\contentsline {section}{\numberline {4}Cryptographic Properties}{6}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Key Management}{6}}
+\newlabel{key_management}{{4.1}{6}}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Contents of cryptographic stat structure (in kernel) for eCryptfs inode}}{7}}
+\newlabel{comp_fig}{{1}{7}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.1.1}Passphrase Authentication Tokens}{8}}
+\newlabel{passphrase_auth_tok}{{4.1.1}{8}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.1.2}Public Key Authentication Tokens}{8}}
+\newlabel{pub_key_auth_tok}{{4.1.2}{8}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Cryptographic Confidentiality Enforcement}{8}}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces File format with HMAC verification enabled.}}{9}}
+\newlabel{hmac_file_format}{{2}{9}}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Simplified HMAC tree. Each 1st and 2nd level HMAC node contains one 4096-byte extent worth of HMAC values.}}{10}}
+\newlabel{hmac_tree}{{3}{10}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}File Format}{10}}
+\newlabel{file_format}{{4.3}{10}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces HMAC update. When a single data extent is modified, eCryptfs recalculates the corresponding HMAC value in the 2nd level HMAC extent. The 1st level HMAC extent covering that 2nd level HMAC extent is also recalculated. Finally, the root RHMC is recalculated across all of the 1st level HMAC extents. If HMAC values occupy 16 bytes each and if each 2nd level HMAC value covers a single data extent, then there will be one 1st level HMAC extent for every 256 megabytes of data in any given file.}}{11}}
+\newlabel{hmac_tree_update}{{4}{11}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.3.1}Marker}{12}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Kernel-userspace Communication Protocol}{12}}
+\newlabel{kernel-daemon}{{4.4}{12}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.5}Deployment Considerations}{13}}
+\bibcite{rfc2440}{1}
+\bibcite{cryptfs}{2}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.6}Cryptographic Summary}{14}}
+\bibcite{fist}{3}

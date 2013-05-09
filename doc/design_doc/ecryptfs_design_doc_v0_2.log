@@ -1,0 +1,291 @@
+This is pdfTeX, Version 3.1415926-2.4-1.40.13 (TeX Live 2012) (format=pdflatex 2012.9.11)  7 NOV 2012 19:31
+entering extended mode
+ restricted \write18 enabled.
+ %&-line parsing enabled.
+**ecryptfs_design_doc_v0_2.tex
+(./ecryptfs_design_doc_v0_2.tex
+LaTeX2e <2011/06/27>
+Babel <v3.8m> and hyphenation patterns for english, dumylang, nohyphenation, ge
+rman-x-2012-05-30, ngerman-x-2012-05-30, afrikaans, ancientgreek, ibycus, arabi
+c, armenian, basque, bulgarian, catalan, pinyin, coptic, croatian, czech, danis
+h, dutch, ukenglish, usenglishmax, esperanto, estonian, ethiopic, farsi, finnis
+h, french, friulan, galician, german, ngerman, swissgerman, monogreek, greek, h
+ungarian, icelandic, assamese, bengali, gujarati, hindi, kannada, malayalam, ma
+rathi, oriya, panjabi, tamil, telugu, indonesian, interlingua, irish, italian, 
+kurmanji, latin, latvian, lithuanian, mongolian, mongolianlmc, bokmal, nynorsk,
+ polish, portuguese, romanian, romansh, russian, sanskrit, serbian, serbianc, s
+lovak, slovenian, spanish, swedish, turkish, turkmen, ukrainian, uppersorbian, 
+welsh, loaded.
+(/usr/local/texlive/2012/texmf-dist/tex/latex/base/article.cls
+Document Class: article 2007/10/19 v1.4h Standard LaTeX document class
+(/usr/local/texlive/2012/texmf-dist/tex/latex/base/size10.clo
+File: size10.clo 2007/10/19 v1.4h Standard LaTeX file (size option)
+)
+\c@part=\count79
+\c@section=\count80
+\c@subsection=\count81
+\c@subsubsection=\count82
+\c@paragraph=\count83
+\c@subparagraph=\count84
+\c@figure=\count85
+\c@table=\count86
+\abovecaptionskip=\skip41
+\belowcaptionskip=\skip42
+\bibindent=\dimen102
+)
+(/usr/local/texlive/2012/texmf-dist/tex/latex/url/url.sty
+\Urlmuskip=\muskip10
+Package: url 2006/04/12  ver 3.3  Verb mode for urls, etc.
+)
+(/usr/local/texlive/2012/texmf-dist/tex/latex/graphics/epsfig.sty
+Package: epsfig 1999/02/16 v1.7a (e)psfig emulation (SPQR)
+
+(/usr/local/texlive/2012/texmf-dist/tex/latex/graphics/graphicx.sty
+Package: graphicx 1999/02/16 v1.0f Enhanced LaTeX Graphics (DPC,SPQR)
+
+(/usr/local/texlive/2012/texmf-dist/tex/latex/graphics/keyval.sty
+Package: keyval 1999/03/16 v1.13 key=value parser (DPC)
+\KV@toks@=\toks14
+)
+(/usr/local/texlive/2012/texmf-dist/tex/latex/graphics/graphics.sty
+Package: graphics 2009/02/05 v1.0o Standard LaTeX Graphics (DPC,SPQR)
+
+(/usr/local/texlive/2012/texmf-dist/tex/latex/graphics/trig.sty
+Package: trig 1999/03/16 v1.09 sin cos tan (DPC)
+)
+(/usr/local/texlive/2012/texmf-dist/tex/latex/latexconfig/graphics.cfg
+File: graphics.cfg 2010/04/23 v1.9 graphics configuration of TeX Live
+)
+Package graphics Info: Driver file: pdftex.def on input line 91.
+
+(/usr/local/texlive/2012/texmf-dist/tex/latex/pdftex-def/pdftex.def
+File: pdftex.def 2011/05/27 v0.06d Graphics/color for pdfTeX
+
+(/usr/local/texlive/2012/texmf-dist/tex/generic/oberdiek/infwarerr.sty
+Package: infwarerr 2010/04/08 v1.3 Providing info/warning/error messages (HO)
+)
+(/usr/local/texlive/2012/texmf-dist/tex/generic/oberdiek/ltxcmds.sty
+Package: ltxcmds 2011/11/09 v1.22 LaTeX kernel commands for general use (HO)
+)
+\Gread@gobject=\count87
+))
+\Gin@req@height=\dimen103
+\Gin@req@width=\dimen104
+)
+\epsfxsize=\dimen105
+\epsfysize=\dimen106
+)
+(./ecryptfs_design_doc_v0_2.aux)
+\openout1 = `ecryptfs_design_doc_v0_2.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 7.
+LaTeX Font Info:    ... okay on input line 7.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 7.
+LaTeX Font Info:    ... okay on input line 7.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 7.
+LaTeX Font Info:    ... okay on input line 7.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 7.
+LaTeX Font Info:    ... okay on input line 7.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 7.
+LaTeX Font Info:    ... okay on input line 7.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 7.
+LaTeX Font Info:    ... okay on input line 7.
+
+(/usr/local/texlive/2012/texmf-dist/tex/context/base/supp-pdf.mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+\scratchcounter=\count88
+\scratchdimen=\dimen107
+\scratchbox=\box26
+\nofMPsegments=\count89
+\nofMParguments=\count90
+\everyMPshowfont=\toks15
+\MPscratchCnt=\count91
+\MPscratchDim=\dimen108
+\MPnumerator=\count92
+\makeMPintoPDFobject=\count93
+\everyMPtoPDFconversion=\toks16
+) (/usr/local/texlive/2012/texmf-dist/tex/generic/oberdiek/pdftexcmds.sty
+Package: pdftexcmds 2011/11/29 v0.20 Utility functions of pdfTeX for LuaTeX (HO
+)
+
+(/usr/local/texlive/2012/texmf-dist/tex/generic/oberdiek/ifluatex.sty
+Package: ifluatex 2010/03/01 v1.3 Provides the ifluatex switch (HO)
+Package ifluatex Info: LuaTeX not detected.
+)
+(/usr/local/texlive/2012/texmf-dist/tex/generic/oberdiek/ifpdf.sty
+Package: ifpdf 2011/01/30 v2.3 Provides the ifpdf switch (HO)
+Package ifpdf Info: pdfTeX in PDF mode is detected.
+)
+Package pdftexcmds Info: LuaTeX not detected.
+Package pdftexcmds Info: \pdf@primitive is available.
+Package pdftexcmds Info: \pdf@ifprimitive is available.
+Package pdftexcmds Info: \pdfdraftmode found.
+)
+(/usr/local/texlive/2012/texmf-dist/tex/latex/oberdiek/epstopdf-base.sty
+Package: epstopdf-base 2010/02/09 v2.5 Base part for package epstopdf
+
+(/usr/local/texlive/2012/texmf-dist/tex/latex/oberdiek/grfext.sty
+Package: grfext 2010/08/19 v1.1 Manage graphics extensions (HO)
+
+(/usr/local/texlive/2012/texmf-dist/tex/generic/oberdiek/kvdefinekeys.sty
+Package: kvdefinekeys 2011/04/07 v1.3 Define keys (HO)
+))
+(/usr/local/texlive/2012/texmf-dist/tex/latex/oberdiek/kvoptions.sty
+Package: kvoptions 2011/06/30 v3.11 Key value format for package options (HO)
+
+(/usr/local/texlive/2012/texmf-dist/tex/generic/oberdiek/kvsetkeys.sty
+Package: kvsetkeys 2012/04/25 v1.16 Key value parser (HO)
+
+(/usr/local/texlive/2012/texmf-dist/tex/generic/oberdiek/etexcmds.sty
+Package: etexcmds 2011/02/16 v1.5 Avoid name clashes with e-TeX commands (HO)
+Package etexcmds Info: Could not find \expanded.
+(etexcmds)             That can mean that you are not using pdfTeX 1.50 or
+(etexcmds)             that some package has redefined \expanded.
+(etexcmds)             In the latter case, load this package earlier.
+)))
+Package grfext Info: Graphics extension search list:
+(grfext)             [.png,.pdf,.jpg,.mps,.jpeg,.jbig2,.jb2,.PNG,.PDF,.JPG,.JPE
+G,.JBIG2,.JB2,.eps]
+(grfext)             \AppendGraphicsExtensions on input line 452.
+
+(/usr/local/texlive/2012/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
+File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
+e
+))
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <12> on input line 13.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <8> on input line 13.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <6> on input line 13.
+
+(./ecryptfs_design_doc_v0_2.toc
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <7> on input line 4.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <5> on input line 4.
+)
+\tf@toc=\write3
+\openout3 = `ecryptfs_design_doc_v0_2.toc'.
+
+ [1
+
+{/usr/local/texlive/2012/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] [2] [3]
+
+Overfull \hbox (20.88213pt too wide) in paragraph at lines 182--188
+[]\OT1/cmr/m/n/10 While pro-cess-ing the header in-for-ma-tion, eCryptfs mod-i-
+fies the \OT1/cmr/m/it/10 ecryptfs[]crypt[]stat
+ []
+
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 190.
+
+(/usr/local/texlive/2012/texmf-dist/tex/latex/base/omscmr.fd
+File: omscmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
+)
+LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 190.
+ [4]
+
+LaTeX Warning: Reference `hmac' on page 5 undefined on input line 264.
+
+[5] [6]
+Overfull \hbox (5.21255pt too wide) in paragraph at lines 341--377
+ [] 
+ []
+
+[7] [8]
+Package epstopdf Info: Source file: <file_format.eps>
+(epstopdf)                    date: 2012-11-01 09:48:47
+(epstopdf)                    size: 111954 bytes
+(epstopdf)             Output file: <file_format-eps-converted-to.pdf>
+(epstopdf)                    date: 2012-11-07 19:31:43
+(epstopdf)                    size: 43073 bytes
+(epstopdf)             Command: <repstopdf --outfile=file_format-eps-converted-
+to.pdf file_format.eps>
+(epstopdf)             \includegraphics on input line 492.
+Package epstopdf Info: Output file is already uptodate.
+ <file_format-eps-converted-to.pdf, id=41, 469.755pt x 86.3225pt>
+File: file_format-eps-converted-to.pdf Graphic file (type pdf)
+
+<use file_format-eps-converted-to.pdf>
+Package pdftex.def Info: file_format-eps-converted-to.pdf used on input line 49
+2.
+(pdftex.def)             Requested size: 258.75pt x 47.54732pt.
+Package epstopdf Info: Source file: <hmac_tree.eps>
+(epstopdf)                    date: 2012-11-01 09:48:47
+(epstopdf)                    size: 69398 bytes
+(epstopdf)             Output file: <hmac_tree-eps-converted-to.pdf>
+(epstopdf)                    date: 2012-11-07 19:31:44
+(epstopdf)                    size: 25150 bytes
+(epstopdf)             Command: <repstopdf --outfile=hmac_tree-eps-converted-to
+.pdf hmac_tree.eps>
+(epstopdf)             \includegraphics on input line 503.
+Package epstopdf Info: Output file is already uptodate.
+
+<hmac_tree-eps-converted-to.pdf, id=42, 853.1875pt x 584.1825pt>
+File: hmac_tree-eps-converted-to.pdf Graphic file (type pdf)
+
+<use hmac_tree-eps-converted-to.pdf>
+Package pdftex.def Info: hmac_tree-eps-converted-to.pdf used on input line 503.
+
+(pdftex.def)             Requested size: 293.2521pt x 200.7944pt.
+Package epstopdf Info: Source file: <hmac_tree_update.eps>
+(epstopdf)                    date: 2012-11-01 09:48:47
+(epstopdf)                    size: 70235 bytes
+(epstopdf)             Output file: <hmac_tree_update-eps-converted-to.pdf>
+(epstopdf)                    date: 2012-11-07 19:31:45
+(epstopdf)                    size: 25139 bytes
+(epstopdf)             Command: <repstopdf --outfile=hmac_tree_update-eps-conve
+rted-to.pdf hmac_tree_update.eps>
+(epstopdf)             \includegraphics on input line 518.
+Package epstopdf Info: Output file is already uptodate.
+
+<hmac_tree_update-eps-converted-to.pdf, id=43, 898.35625pt x 629.35126pt>
+File: hmac_tree_update-eps-converted-to.pdf Graphic file (type pdf)
+
+<use hmac_tree_update-eps-converted-to.pdf>
+Package pdftex.def Info: hmac_tree_update-eps-converted-to.pdf used on input li
+ne 518.
+(pdftex.def)             Requested size: 317.39937pt x 222.35051pt.
+ [9 <./file_format-eps-converted-to.pdf>] [10 <./hmac_tree-eps-converted-to.pdf
+>] [11 <./hmac_tree_update-eps-converted-to.pdf>] [12]
+Overfull \hbox (9.5283pt too wide) in paragraph at lines 688--701
+[]\OT1/cmr/m/n/10 eCryptfs man-ages a netlink socket be-tween the ker-nel mod-u
+le and the userspace
+ []
+
+[13] [14] [15] (./ecryptfs_design_doc_v0_2.aux)
+
+LaTeX Warning: There were undefined references.
+
+ ) 
+Here is how much of TeX's memory you used:
+ 1665 strings out of 493488
+ 24107 string characters out of 3141326
+ 82166 words of memory out of 3000000
+ 4950 multiletter control sequences out of 15000+200000
+ 9097 words of font info for 33 fonts, out of 3000000 for 9000
+ 957 hyphenation exceptions out of 8191
+ 37i,9n,23p,621b,256s stack positions out of 5000i,500n,10000p,200000b,50000s
+</usr/local/texlive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb
+></usr/local/texlive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb>
+</usr/local/texlive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb><
+/usr/local/texlive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></u
+sr/local/texlive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr
+/local/texlive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/l
+ocal/texlive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/loc
+al/texlive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/local/
+texlive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/local/tex
+live/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/texliv
+e/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive
+/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/local/texlive/
+2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmti8.pfb></usr/local/texlive/20
+12/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></usr/local/texlive/201
+2/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt8.pfb>
+Output written on ecryptfs_design_doc_v0_2.pdf (15 pages, 305909 bytes).
+PDF statistics:
+ 122 PDF objects out of 1000 (max. 8388607)
+ 86 compressed objects within 1 object stream
+ 0 named destinations out of 1000 (max. 500000)
+ 16 words of extra memory for PDF output out of 10000 (max. 10000000)
+

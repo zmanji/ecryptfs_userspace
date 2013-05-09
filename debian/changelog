@@ -1,0 +1,1883 @@
+ecryptfs-utils (104) UNRELEASED; urgency=low
+
+  [ Colin King ]
+  * src/libecryptfs/ecryptfs-stat.c, tests/kernel/extend-file-
+    random/test.c, tests/kernel/inode-race-stat/test.c,
+    tests/kernel/trunc-file/test.c:
+    - Fixed some 32 bit build warnings
+
+  [ Nobuto MURATA ]
+  * fix an empty update-notifier window (LP: #1107650)
+    - changes made in Rev.758 was incomplete
+
+  [ Tyler Hicks ]
+  * doc/manpage/ecryptfs.7:
+    - adjust man page text to avoid confusion about whether the interactive
+      mount helper takes a capital 'N' for the answer to y/n questions
+      (LP: #1130460)
+
+  [ Dustin Kirkland ]
+  * src/utils/ecryptfs-setup-swap: LP: #1172014
+    - write crypttab entry using UUID
+
+ -- Nobuto MURATA <nobuto@ubuntu.com>  Thu, 21 Feb 2013 01:56:33 +0900
+
+ecryptfs-utils (103) quantal; urgency=low
+
+  [ Tyler Hicks ]
+  * debian/rules:
+    - Use dpkg-buildflags to inject distro compiler hardening flags into the
+      build. This also fixes the hardening-no-fortify-functions lintian
+      warnings.
+
+  [ Dustin Kirkland ]
+  * doc/manpage/ecryptfs-add-passphrase.1, doc/manpage/ecryptfsd.8,
+    doc/manpage/ecryptfs-find.1, doc/manpage/ecryptfs-generate-tpm-
+    key.1, doc/manpage/ecryptfs-insert-wrapped-passphrase-into-
+    keyring.1, doc/manpage/ecryptfs-manager.8, doc/manpage/ecryptfs-
+    migrate-home.8, doc/manpage/ecryptfs-mount-private.1,
+    doc/manpage/ecryptfs-recover-private.1, doc/manpage/ecryptfs-rewrap-
+    passphrase.1, doc/manpage/ecryptfs-rewrite-file.1,
+    doc/manpage/ecryptfs-setup-private.1, doc/manpage/ecryptfs-setup-
+    swap.1, doc/manpage/ecryptfs-stat.1, doc/manpage/ecryptfs-umount-
+    private.1, doc/manpage/ecryptfs-unwrap-passphrase.1,
+    doc/manpage/ecryptfs-verify.1, doc/manpage/ecryptfs-wrap-
+    passphrase.1, doc/manpage/Makefile.am, doc/manpage/mount.ecryptfs.8,
+    doc/manpage/mount.ecryptfs_private.1, doc/manpage/pam_ecryptfs.8,
+    doc/manpage/umount.ecryptfs.8,
+    doc/manpage/umount.ecryptfs_private.1, src/desktop/ecryptfs-find =>
+    src/utils/ecryptfs-find, src/desktop/Makefile.am,
+    src/utils/Makefile.am:
+    - add 3 new manpages, for ecryptfs-find, ecryptfs-verify, and
+      ecryptfs-migrate-home
+    - Add SEE ALSO section to manpages which were missing it
+    - Mention "Debian and Ubuntu" in license location
+    - move the ecryptfs-find utility to the proper location in src/utils
+  * src/utils/Makefile.am:
+    - fix broken build
+  * debian/ecryptfs-utils.links:
+    - link no longer needed for ecryptfs-find
+
+  [ Colin King ]
+  * === added directory tests/kernel/mmap-bmap, === added directory
+    tests/kernel/xattr, tests/kernel/link.sh, tests/kernel/Makefile.am,
+    tests/kernel/mknod.sh, tests/kernel/mmap-bmap.sh, tests/kernel/mmap-
+    bmap/test.c, tests/kernel/tests.rc, tests/kernel/xattr.sh,
+    tests/kernel/xattr/test.c:
+    - ran the current eCryptfs tests on 3.8-rc4 with kernel gcov enabled
+      and spotted a few trivial areas where it would be useful to up the
+      test coverage on the code
+    - so here are a few very simple additional tests to exercise eCryptfs
+      a little further
+
+ -- Dustin Kirkland <kirkland@ubuntu.com>  Fri, 25 Jan 2013 12:57:51 -0600
+
+ecryptfs-utils (102) quantal; urgency=low
+
+  [ Dustin Kirkland ]
+  * debian/control:
+    - bump standards, no change
+
+  [ Tyler Hicks ]
+  * autogen.sh, scripts/release.sh, Makefile.am:
+    - Break out the autoreconf and intltoolize commands from release.sh into
+      an executable autogen.sh
+    - Use the --copy option when invoking intltoolize
+    - Include the new autogen.sh script in the release tarball
+  * debian/rules, debian/control:
+    - Use dh-autoreconf so that upstream sources can easily be used to build
+      packages for all the stable Ubuntu releases in the ecryptfs-utils daily
+      build PPA
+    - Override the dh_autoreconf target by running the autogen.sh script
+    - Drop Build-Depends on autotools-dev since dh-autoreconf is a superset of
+      autotools-dev
+    - Drop Build-Depends on autoconf, automake, and libtool since
+      dh-autoreconf depends on all of these packages
+  * m4/ac_python_devel.m4:
+    - Fix FTBFS in Raring Ringtail due to multiarch Python. Be sure to include
+      platform specific Python include directions in SWIG_PYTHON_CPPFLAGS.
+  * src/utils/mount.ecryptfs_private.c:
+    - Fix conditionals when checking whether to remove authentication tokens
+      from the kernel keyring upon umount. This conditional was incorrectly
+      modified in ecryptfs-utils-101, yet the authentication tokens still seem
+      to be removed from the kernel keyring so it isn't clear if there was
+      actually a user-facing regression.
+    - Pass the FEKEK sig, rather than the FNEK sig, to
+      ecryptfs_private_is_mounted()
+    - Restore behavior of not printing error messages to syslog when
+      unmounting and keys cannot be found in the kernel keyring.
+    - Restore behavior of printing a useful error message about
+      ecryptfs-mount-private when mounting and keys cannot be found in the
+      kernel keyring
+    - Fix memory leak and clean up free()'s in an error path
+    - Use pointer assignment tests, rather than strlen(), to determine which
+      key signatures were fetched
+  * src/daemon/main.c, src/include/ecryptfs.h,
+    src/libecryptfs/{Makefile.am,messaging.c,miscdev.c,netlink.c,sysfs.c},
+    doc/manpage/ecryptfsd.8, doc/design_doc/ecryptfs_design_doc_v0_2.tex:
+    - Remove netlink messaging interface support
+    - Netlink messaging support was superceded by the miscdev interface
+      (/dev/ecryptfs) in upstream kernel version 2.6.26 in July, 2008
+    - Netlink messaging support was completely removed from the upstream
+      kernel starting with version 2.6.32 in December, 2009
+  * src/jprobes/*, scripts/delete-cruft.sh:
+    - Remove all jprobes code, as I don't use jprobes to debug eCryptfs kernel
+      issues and I don't like the idea of maintaining these jprobes outside of
+      the kernel tree
+  * src/escrow/*:
+    - Remove all escrow code, as it isn't used or maintained
+  * tests/kernel/llseek.sh, tests/kernel/llseek/test.c,
+    tests/userspace/wrap-unwrap.sh, tests/userspace/wrap-unwrap/test.c:
+    - Migrate some old testcases over to the modern test framework
+  * tests/lib/etl_funcs.sh:
+    - Update etl_create_test_dir() to allow a parent directory to be specified
+      when creating the directory
+  * src/testcases:
+    - Delete old testcases that were either too basic, covered by more
+      extensive tests in the modern test framework, or just didn't work
+
+  [ Nobuto MURATA ]
+  * src/desktop/ecryptfs-record-passphrase:
+
+ -- Dustin Kirkland <kirkland@ubuntu.com>  Tue, 22 Jan 2013 16:02:24 -0600
+
+ecryptfs-utils (101) quantal; urgency=low
+
+  [ Eric Lammerts ]
+  * src/libecryptfs/sysfs.c: LP: #1007880
+    - Handle NULL mnt pointer when sysfs is not mounted
+
+  [ Tyler Hicks ]
+  * src/utils/ecryptfs-migrate-home: LP: #1026180
+    - Correct minor misspelling
+  * src/utils/ecryptfs-recover-private: LP: #1004082
+    - Fix option parsing when --rw is specified
+  * src/utils/ecryptfs-recover-private: LP: #1028923
+    - Simplify success message to prevent incorrectly reporting that a
+      read-only mount was performed when the --rw option is specified
+  * tests/lib/etl_func.sh:
+    - Add test library function to return a lower path from an upper path,
+      based on inode numbers
+  * tests/kernel/mmap-close.sh, tests/kernel/mmap-close/test.c:
+    - Add regression test for open->mmap()->close()->dirty memory->munmap()
+      pattern
+  * tests/kernel/lp-561129.sh:
+    - Add test for checking that a pre-existing target inode is properly
+      evicted after a rename
+  * tests/README:
+    - Add documentation on the steps to take when adding new test cases
+
+  [ Colin King ]
+  * tests/kernel/lp-911507.sh:
+    - Add test case for initializing empty lower files during open()
+  * tests/kernel/lp-872905.sh:
+    - Add test case to check for proper unlinking of lower files when
+      lower file initialization fails
+  * src/key_mod/ecryptfs_key_mod_openssl.c,
+    src/key_mod/ecryptfs_key_mod_pkcs11_helper.c,
+    src/libecryptfs/key_management.c,
+    src/utils/mount.ecryptfs_private.c, src/utils/umount.ecryptfs.c:
+    - address some issues raised by smatch static analysis
+    - fix some memory leaks with frees
+    - fix some pointer refs and derefs
+    - fix some comment typos
+
+  [ Dustin Kirkland ]
+  * src/libecryptfs/key_management.c:
+    - silence pam error message when errno == EACCES
+      + "Error attempting to parse .ecryptfsrc file; rc = [-13]"
+  * src/utils/mount.ecryptfs_private.c: LP: #1052038
+    - fix race condition, which typically manifests itself with a user
+      saying that their home directory is not accessible, or that their
+      filenames are not decrypted
+    - the root of the problem is that we were reading the signature file,
+      ~/.ecryptfs/Private.sig, twice; in some cases, the first one succeeds,
+      so the file encryption signature is read and key is loaded, but then
+      some other process (usually from PAM, perhaps a cron job or a
+      subsequent login) mounts the home directory before the filename
+      encryption key is loaded;  thus, $HOME is mounted but filenames are
+      not decrypted, so the second read of ~/.ecryptfs/Private.sig fails
+      as that file is not found
+    - the solution is to rework the internal fetch_sig() function and read
+      one or both signatures within a single open/read/close operation of
+      the file
+    - free memory used by char **sig on failure
+  * debian/copyright:
+    - fix lintian warning
+
+ -- Dustin Kirkland <kirkland@ubuntu.com>  Thu, 25 Oct 2012 16:12:36 -0500
+
+ecryptfs-utils (100) precise; urgency=low
+
+  [ Tyler Hicks ]
+  * src/pam_ecryptfs/pam_ecryptfs.c, src/libecryptfs/key_management.c:
+      LP: #1024476
+    - fix regression introduced in ecryptfs-utils-99 when Encrypted
+      Home/Private is in use and the eCryptfs kernel code is compiled as a
+      module
+    - drop check for kernel filename encryption support in pam_ecryptfs, as
+      appropriate privileges to load the eCryptfs kernel module may not be
+      available and filename encryption has been supported since 2.6.29
+    - always add filename encryption key to the kernel keyring from pam_mount
+
+  [ Colin King ]
+  * tests/kernel/inode-race-stat/test.c:
+    - limit number of forks based on fd limits
+  * tests/kernel/enospc.sh, tests/kernel/enospc/test.c,
+    tests/kernel/Makefile.am, tests/kernel/tests.rc:
+    - add test case for ENOSPC
+
+  [ Tim Harder ]
+  * m4/ac_python_devel.m4: LP: #1029217
+    - proplery save and restore CPPFLAGS and LIBS when python support is
+      enabled
+
+ -- Dustin Kirkland <kirkland@ubuntu.com>  Thu, 02 Aug 2012 16:33:22 -0500
+
+ecryptfs-utils (99) quantal; urgency=low
+
+  [ Dustin Kirkland ]
+  * debian/ecryptfs-utils.postinst: LP: #936093
+    - ensure desktop file is executable
+
+  [ Wesley Wiedenmeier ]
+  * src/utils/mount.ecryptfs.c: LP: #329264
+    - remove old hack, that worked around a temporary kernel regression;
+      ensure that all mount memory is mlocked
+
+  [ Sebastian Krahmer ]
+  * src/pam_ecryptfs/pam_ecryptfs.c: LP: #732614
+    - drop group privileges in the same places that user privileges are
+      dropped
+    - check return status of setresuid() calls and return if they fail
+    - drop privileges before checking for the existence of
+      ~/.ecryptfs/auto-mount to prevent possible file existence leakage
+      by a symlink to a path that typically would not be searchable by
+      the user
+    - drop privileges before reading salt from the rc file to prevent the
+      leakage of root's salt and, more importantly, using the incorrect salt
+    - discovered, independently, by Vasiliy Kulikov and Sebastian Krahmer
+  * src/pam_ecryptfs/pam_ecryptfs.c: LP: #1020904
+    - after dropping privileges, clear the environment before executing the
+      private eCryptfs mount helper
+    - discovered by Sebastian Krahmer
+  * src/utils/mount.ecryptfs_private.c: LP: #1020904
+    - do not allow private eCryptfs mount aliases to contain ".." characters
+      as a preventative measure against a crafted file path being used as an
+      alias
+    - force the MS_NOSUID mount flag to protect against user controlled lower
+      filesystems, such as an auto mounted USB drive, that may contain a
+      setuid-root binary
+      + CVE-2012-3409
+    - force the MS_NODEV mount flag
+    - after dropping privileges, clear the environment before executing umount
+    - discovered by Sebastian Krahmer
+
+  [ Tyler Hicks ]
+  * src/libecryptfs/key_management.c: LP: #732614
+    - zero statically declared buffers to prevent the leakage of stack
+      contents in the case of a short file read
+    - discovered by Vasiliy Kulikov
+  * src/libecryptfs/module_mgr.c, src/pam_ecryptfs/pam_ecryptfs.c:
+    - fix compiler warnings
+
+ -- Dustin Kirkland <kirkland@ubuntu.com>  Fri, 13 Jul 2012 11:21:53 -0500
+
+ecryptfs-utils (98) quantal; urgency=low
+
+  [ Dustin Kirkland ]
+  * debian/ecryptfs-utils.prerm:
+    - drop the pre-removal ERRORs down to WARNINGs
+    - these have caused a ton of trouble;  whatever is causing ecryptfs-utils
+      to be marked for removal should be fixed;  but ecryptfs exiting 1 seems
+      to be causing more trouble than it's worth
+    - LP: #871021, #812270, #988960, #990630, #995381, #1010961
+  * doc/ecryptfs-faq.html:
+    - update the frequently asked questions, which haven't seen much
+      attention in a while now
+    - drop a few references to sourceforge
+  * doc/ecryptfs-pam-doc.txt, doc/manpage/fr/ecryptfs-add-passphrase.1,
+    doc/manpage/fr/ecryptfs-generate-tpm-key.1, doc/manpage/fr/ecryptfs-
+    insert-wrapped-passphrase-into-keyring.1, doc/manpage/fr/ecryptfs-
+    mount-private.1, doc/manpage/fr/ecryptfs-rewrap-passphrase.1,
+    doc/manpage/fr/ecryptfs-setup-private.1, doc/manpage/fr/ecryptfs-
+    umount-private.1, doc/manpage/fr/ecryptfs-unwrap-passphrase.1,
+    doc/manpage/fr/ecryptfs-wrap-passphrase.1, doc/manpage/fr/ecryptfs-
+    zombie-kill.1, doc/manpage/fr/ecryptfs-zombie-list.1,
+    doc/sourceforge_webpage/ecryptfs-article.pdf,
+    doc/sourceforge_webpage/ecryptfs_design_doc_v0_1.pdf,
+    doc/sourceforge_webpage/ecryptfs-faq.html,
+    doc/sourceforge_webpage/ecryptfs-key-diagram-356.png,
+    doc/sourceforge_webpage/ecryptfs-key-diagram-640.png,
+    doc/sourceforge_webpage/ecryptfs-pageuptodate-call-graph.png,
+    doc/sourceforge_webpage/ecryptfs-pam-doc.txt,
+    doc/sourceforge_webpage/ecryptfs.pdf,
+    doc/sourceforge_webpage/index.html, doc/sourceforge_webpage/README,
+    === removed directory doc/manpage/fr, === removed directory
+    doc/sourceforge_webpage, rpm/ecryptfs-utils.spec:
+    - remove some deprecated documentation
+    - fish it out of bzr, if we ever need it again, but let's
+      quit publishing it in our release tarballs
+
+ -- Dustin Kirkland <kirkland@ubuntu.com>  Sun, 24 Jun 2012 11:41:27 -0500
+
+ecryptfs-utils (97) quantal; urgency=low
+
+  [ Kees Cook ]
+  * src/pam_ecryptfs/pam_ecryptfs.c: LP: #938326
+    - exit, rather than return to prevent duplicate processes
+
+  [ Andreas Raster ]
+  * src/desktop/ecryptfs-find:
+    - $mounts was quoted once too often
+
+  [ George Wilson ]
+  * src/key_mod/ecryptfs_key_mod_openssl.c,
+    src/key_mod/ecryptfs_key_mod_pkcs11_helper.c,
+    src/key_mod/ecryptfs_key_mod_tspi.c: LP: #937331
+    - IBM would like to grant a license exception for key modules that
+      require linking to OpenSSL. The change should make the modules
+      shippable by Linux distributions
+
+  [ Dustin Kirkland ]
+  * debian/copyright:
+    - note the GPLv2 SSL exception granted by IBM for the key modules
+  * debian/control, debian/copyright, doc/manpage/ecryptfs.7,
+    doc/manpage/ecryptfs-add-passphrase.1, doc/manpage/ecryptfsd.8,
+    doc/manpage/ecryptfs-generate-tpm-key.1, doc/manpage/ecryptfs-
+    insert-wrapped-passphrase-into-keyring.1, doc/manpage/ecryptfs-
+    manager.8, doc/manpage/ecryptfs-mount-private.1,
+    doc/manpage/ecryptfs-recover-private.1, doc/manpage/ecryptfs-rewrap-
+    passphrase.1, doc/manpage/ecryptfs-rewrite-file.1,
+    doc/manpage/ecryptfs-setup-private.1, doc/manpage/ecryptfs-setup-
+    swap.1, doc/manpage/ecryptfs-stat.1, doc/manpage/ecryptfs-umount-
+    private.1, doc/manpage/ecryptfs-unwrap-passphrase.1,
+    doc/manpage/ecryptfs-wrap-passphrase.1,
+    doc/manpage/mount.ecryptfs.8, doc/manpage/mount.ecryptfs_private.1,
+    doc/manpage/pam_ecryptfs.8, doc/manpage/umount.ecryptfs.8,
+    doc/manpage/umount.ecryptfs_private.1, README,
+    src/utils/mount.ecryptfs.c:
+    - use the new ecryptfs.org website where appropriate
+  * debian/control:
+    - update to suggest zescrow-client
+
+  [ Sergio Peña ]
+  * src/libecryptfs/cipher_list.c: LP: #922821
+    - add the new name of the blowfish cipher (linux >= 3.2)
+  * src/include/ecryptfs.h, src/libecryptfs/main.c,
+    src/utils/mount.ecryptfs.c: LP: #917509
+    - use execl() to mount ecryptfs
+    - this allows us to support any arbitrary mount options in
+      /etc/fstab
+
+  [ Tyler Hicks ]
+  * doc/manpage/ecryptfs.7:
+    - Remove the note saying that the passphrase and openssl key modules are
+      available by default. That's true upstream but not always true in distro
+      builds.
+  * tests/run_tests.sh:
+    - Make upper and lower mount point arguments optional by automatically
+      creating directories in /tmp by default.
+    - Make it possible to run only userspace tests without having to specify
+      unused mount information
+    - Accept a comma-separated list of lower filesystems to test on and loop
+      through all kernel tests for each lower filesystem
+    - Accept a comma-separated list of tests to run
+  * tests/lib/etl_funcs.sh:
+    - Unset $ETL_DISK just before etl_remove_disk() successfully returns
+  * tests/userspace/Makefile.am:
+    - Also build 'make check' tests when building with --enable-tests
+  * include/ecryptfs.h, libecryptfs/Makefile.am,
+    libecryptfs/cipher_list.c, libecryptfs/module_mgr.c,
+    utils/io.h: LP: #994813
+    - remove overly complicated implementation to detect what ciphers
+      are supported by the currently running kernel's crypto api
+    - prompt for the entire supported cipher list, if the user selects a
+      cipher that their kernel doesn't support, the mount will fail
+      and the kernel will write an error message to the syslog
+  * src/libecryptfs/module_mgr.c:
+    - Use correct blowfish block size when displaying supported ciphers to
+      the user
+  * tests/kernel/lp-1009207.sh, tests/kernel/Makefile.am,
+    tests/kernel/tests.rc:
+    - Add simple test case for incorrect handling of umask and default POSIX
+      ACL masks
+  * tests/kernel/lp-994247.sh, tests/kernel/lp-994247/test.c,
+    tests/kernel/Makefile.am, tests/kernel/tests.rc:
+    - Add test case for incorrect handling of open /dev/ecryptfs file
+      descriptors that are passed or inherited by other processes
+
+  [ Colin King ]
+  * tests/lib/etl_funcs.sh:
+    - etl_lumount() should use DST rather than SRC dir so it can run on Lucid
+    - use file system appropriate mkfs force flag
+    - cater for correct ext2 default mount flags
+  * tests/kernel/lp-509180.sh, tests/kernel/lp-509180/test.c:
+    - test for trailing garbage at end of files
+  * tests/kernel/lp-524919.sh, tests/kernel/lp-524919/test.c:
+    - test case for checking lstat/readlink size
+  * tests/kernel/lp-870326.sh, tests/kernel/lp-870326/test.c:
+    - test case for open(), mmap(), close(), modify mmap'd region
+  * tests/kernel/lp-469664.sh:
+    - test case for lsattr
+  * tests/kernel/lp-613873.sh:
+    - test case for stat modify time
+  * tests/kernel/lp-745836.sh:
+    - test case for clearing ECRYPTFS_NEW_FILE flag during truncate
+  * tests/lib/etl_funcs.sh, tests/kernel/extend-file-random.sh,
+    tests/kernel/trunc-file.sh (LP: #1007159):
+    - Add test library function for estimating available space in lower fs
+    - Use new library function in tests that need to create large files
+
+  [ Colin Watson ]
+  * src/utils/ecryptfs-setup-swap: Skip /dev/zram* swap devices
+    LP: #979350
+
+  [ Serge Hallyn ]
+  * src/utils/mount.ecryptfs_private.c:
+    - EoL fixes
+
+ -- Dustin Kirkland <kirkland@ubuntu.com>  Fri, 15 Jun 2012 09:32:48 -0500
+
+ecryptfs-utils (96) oneiric; urgency=low
+
+  [ Dustin Kirkland ]
+  * CONTRIBUTING:
+    - added a new file to describe how to contribute to ecryptfs
+  * === added directory img/old, img/old/ecryptfs_14.png,
+    img/old/ecryptfs_192.png, img/old/ecryptfs_64.png:
+    - saving the old logos/branding for posterity
+  * debian/copyright, img/COPYING:
+    - added CC-by-SA 3.0 license
+    - use the text version
+  * img/ecryptfs_14.png, img/ecryptfs_192.png, img/ecryptfs_64.png:
+    - added scaled copies of images used for Launchpad.net branding
+  * src/utils/ecryptfs-recover-private: LP: #847505
+    - add an option to allow user to enter the mount passphrase,
+      in case they've recorded that, but forgotten their login
+      passphrase
+  * src/libecryptfs/sysfs.c: LP: #802197
+    - default sysfs to /sys, if not found in /etc/mtab
+    - it seems that reading /etc/mtab for this is outdated
+    - ensure that ecryptfs works even if there is no sysfs entry
+      in /etc/mtab
+  * src/key_mod/ecryptfs_key_mod_tspi.c: LP: #462225
+    - fix TPM and string_to_uuid 64bits issue
+    - thanks to Janos for the patch
+
+  [ Tyler Hicks ]
+  * CONTRIBUTING:
+    - clarified how to contribute to the ecryptfs kernel module
+  * tests/lib/etl_funcs.sh:
+    - created eCryptfs test library of bash functions for use in test
+      cases and test harnesses
+  * test/etl_add_passphrase_key_to_keyring.c:
+    - created a C helper program to allow bash scripts to interface to
+      the libecryptfs function that adds passphrase-based keys to the
+      kernel keyring
+  * tests/kernel/tests.rc, tests/userspace/tests.rc:
+    - created a test case category files for test harnesses to source
+      when running testcases of a certain category (destructive, safe,
+      etc.)
+  * tests/run_tests.sh:
+    - created a test harness to run eCryptfs test cases
+  * tests/kernel/miscdev-bad-count.sh,
+    tests/kernel/miscdev-bad-count/test.c:
+    - created test case for miscdev issue reported to mailing list
+  * tests/kernel/lp-885744.sh:
+    - created test case for pathconf bug
+  * tests/kernel/lp-926292.sh:
+    - created test case for checking stale inode attrs after setxattr
+  * tests/new.sh:
+    - created new test case template to copy from
+  * tests/userspace/verify-passphrase-sig.sh,
+    tests/userspace/verify-passphrase-sig/test.c:
+    - created test case, for make check, to test the creation of
+      passphrase-based fekeks and signatures
+  * configure.ac, Makefile.am, tests/Makefile.am, tests/lib/Makefile.am,
+    tests/kernel/Makefile.am, tests/userspace/Makefile.am:
+    - updated and created autoconf/automake files to build the new tests
+      directory
+    - added make check target
+
+  [ Eddie Garcia ]
+  * img/*: LP: #907131
+    - contributing a new set of logos and branding under the CC-by-SA3.0
+      license
+
+  [ Colin King ]
+  * tests/kernel/extend-file-random.sh,
+    tests/kernel/extend-file-random/test.c:
+    - Test to randomly extend file size, read/write + unlink
+  * tests/kernel/trunc-file.sh, tests/kernel/trunc-file/test.c:
+    - Test to exercise file truncation
+  * tests/kernel/directory-concurrent.sh,
+    tests/kernel/directory-concurrent/test.c:
+    - test for directory creation/deletion races with multiple processes
+  * tests/kernel/file-concurrent.sh,
+    tests/kernel/file-concurrent/test.c:
+    - test for file creation/truncation/unlink races with multiple
+      processes
+  * tests/kernel/inotify.sh, tests/kernel/inotify/test.c:
+    - test for proper inotify support
+  * tests/kernel/mmap-dir.sh, tests/kernel/mmap-dir/test.c:
+    - test that directory files cannot be mmap'ed
+  * tests/kernel/read-dir.sh, tests/kernel/read-dir/test.c:
+    - test that read() on directory files returns the right error
+  * tests/kernel/setattr-flush-dirty.sh:
+    - test that the modified timestamp isn't clobbered in writeback
+  * tests/kernel/inode-race-stat.sh, tests/kernel/inode-race-stat/test.c:
+    - test for inode initialization race condition
+
+ -- Dustin Kirkland <kirkland@ubuntu.com>  Thu, 16 Feb 2012 14:23:18 -0600
+
+ecryptfs-utils (95) oneiric; urgency=low
+
+  [ Serge Hallyn ]
+  * fix infinite loop on arm: fgetc returns an int, and -1 at end of
+    options.  Arm makes char unsigned. (LP: #884407)
+
+  [ Dustin Kirkland ]
+  * debian/compat, debian/control, debian/ecryptfs-utils.install,
+    debian/ecryptfs-utils.lintian-overrides,
+    debian/libecryptfs0.install, debian/libecryptfs-dev.install,
+    debian/lintian/ecryptfs-utils, debian/python-ecryptfs.install,
+    debian/rules, debian/source/options, doc/ecryptfs-pam-doc.txt,
+    doc/manpage/ecryptfs-setup-private.1, lintian/ecryptfs-utils, ===
+    removed directory debian/lintian:
+    - merge a bunch of packaging changes from Debian's Daniel Baumann
+    - fixes LP: #800647
+  * scripts/release.sh:
+    - minor release fixes
+
+ -- Dustin Kirkland <kirkland@ubuntu.com>  Wed, 14 Dec 2011 14:21:34 -0600
+
+ecryptfs-utils (94) released; urgency=low
+
+  [ Dustin Kirkland ]
+  * scripts/release.sh:
+    - fix release script
+    - bump ubuntu release
+  * doc/manpage/ecryptfs-recover-private.1, src/utils/ecryptfs-migrate-
+    home (properties changed: -x to +x), src/utils/ecryptfs-recover-
+    private:
+    - add a --rw option for ecryptfs-recover-private
+  * src/utils/ecryptfs-migrate-home: LP: #820416
+    - show progress on rsync
+  * debian/ecryptfs-utils.ecryptfs-utils-restore.upstart,
+    debian/ecryptfs-utils.ecryptfs-utils-save.upstart,
+    src/utils/ecryptfs-migrate-home,
+    src/utils/ecryptfs-setup-private: LP: #883238
+    - remove 2 upstart scripts, which attempted to "save" users who didn't
+      login after migrating their home; instead, we now require the root
+      user to enter user passwords at migration time
+  * debian/copyright, debian/ecryptfs-utils.ecryptfs-utils-
+    restore.upstart, debian/ecryptfs-utils.ecryptfs-utils-save.upstart,
+    doc/manpage/ecryptfs.7, doc/manpage/ecryptfs-add-passphrase.1,
+    doc/manpage/ecryptfs-generate-tpm-key.1, doc/manpage/ecryptfs-
+    insert-wrapped-passphrase-into-keyring.1, doc/manpage/ecryptfs-
+    mount-private.1, doc/manpage/ecryptfs-recover-private.1,
+    doc/manpage/ecryptfs-rewrap-passphrase.1, doc/manpage/ecryptfs-
+    rewrite-file.1, doc/manpage/ecryptfs-setup-private.1,
+    doc/manpage/ecryptfs-setup-swap.1, doc/manpage/ecryptfs-stat.1,
+    doc/manpage/ecryptfs-umount-private.1, doc/manpage/ecryptfs-unwrap-
+    passphrase.1, doc/manpage/ecryptfs-wrap-passphrase.1,
+    doc/manpage/fr/ecryptfs-add-passphrase.1, doc/manpage/fr/ecryptfs-
+    generate-tpm-key.1, doc/manpage/fr/ecryptfs-insert-wrapped-
+    passphrase-into-keyring.1, doc/manpage/fr/ecryptfs-mount-private.1,
+    doc/manpage/fr/ecryptfs-rewrap-passphrase.1,
+    doc/manpage/fr/ecryptfs-setup-private.1, doc/manpage/fr/ecryptfs-
+    umount-private.1, doc/manpage/fr/ecryptfs-unwrap-passphrase.1,
+    doc/manpage/fr/ecryptfs-wrap-passphrase.1, doc/manpage/fr/ecryptfs-
+    zombie-kill.1, doc/manpage/fr/ecryptfs-zombie-list.1,
+    doc/manpage/mount.ecryptfs_private.1, doc/manpage/pam_ecryptfs.8,
+    doc/manpage/umount.ecryptfs.8,
+    doc/manpage/umount.ecryptfs_private.1,
+    src/pam_ecryptfs/pam_ecryptfs.c,
+    src/utils/ecryptfs_add_passphrase.c,
+    src/utils/ecryptfs_insert_wrapped_passphrase_into_keyring.c,
+    src/utils/ecryptfs-migrate-home, src/utils/ecryptfs-mount-private,
+    src/utils/ecryptfs-recover-private,
+    src/utils/ecryptfs_rewrap_passphrase.c, src/utils/ecryptfs-rewrite-
+    file, src/utils/ecryptfs-setup-private, src/utils/ecryptfs-setup-
+    swap, src/utils/ecryptfs-umount-private,
+    src/utils/ecryptfs_unwrap_passphrase.c,
+    src/utils/ecryptfs_wrap_passphrase.c:
+    - update some email addresses, moving kirkland@canonical.com ->
+      kirkland@ubuntu.com (which I can still read)
+  * src/libecryptfs/key_management.c: LP: #715066
+    - fix 2 places where we were handling
+      ecryptfs_add_passphrase_key_to_keyring() inconsistently
+    - if we're trying to add a key to the keyring, and it's already there,
+      treat that as "success"
+  * debian/control:
+    - ecryptfs-setup-swap is strongly recommended, which depends on
+      cryptsetup; so promote cryptsetup from suggests -> recommends
+
+  [ Stephan Ritscher and Tyler Hicks ]
+  * src/libecryptfs/cmd_ln_parser.c: LP: #683535
+    - fix passphrase_passwd_fd for pipes
+    - handle memory allocation failures
+    - free memory in error paths
+
+  [ Arfrever Frehtes Taifersar Arahesis ]
+  * configure.ac: LP: #893327
+    - no need to check for python, if --disable-pywrap is passed
+
+ -- Dustin Kirkland <dustin.kirkland@gazzang.com>  Thu, 27 Oct 2011 10:58:47 -0500
+
+ecryptfs-utils (93) oneiric; urgency=low
+
+  * src/utils/ecryptfs-verify, src/utils/Makefile.am:
+    - add an ecryptfs-verify utility, LP: #845738
+  * src/testcases/write-read.sh:
+    - added a write/read test utility
+  * doc/manpage/ecryptfs-mount-private.1, doc/manpage/ecryptfs-setup-
+    private.1, doc/manpage/mount.ecryptfs_private.1,
+    doc/manpage/umount.ecryptfs_private.1: LP: #882267
+    - remove inaccurate documentation about being a member of the ecryptfs
+      group
+  * src/utils/ecryptfs-setup-private: LP: #882314
+    - fix preseeded encrypted home Ubuntu installations (thanks Timo!)
+
+ -- Dustin Kirkland <kirkland@ubuntu.com>  Thu, 27 Oct 2011 10:58:36 -0500
+
+ecryptfs-utils (92) oneiric; urgency=low
+
+  * src/libecryptfs/key_management.c: LP: #725862
+    - fix nasty bug affecting users who do *not* encrypt filenames;
+      the first login works, but on logout, only one key gets
+      cleaned out; subsequent logins do not insert the necessary key
+      due to an early "goto out"; this fix needs to be SRU'd
+  * debian/rules: LP: #586281
+    - fix perms on desktop mount file
+  * src/pam_ecryptfs/pam_ecryptfs.c: LP: #838471
+    - rework syslogging to be less noisy and note pam_ecryptfs
+
+ -- Dustin Kirkland <kirkland@ubuntu.com>  Thu, 01 Sep 2011 16:25:03 -0500
+
+ecryptfs-utils (91) oneiric; urgency=low
+
+  [ Diego E. "Flameeyes" Pettenò ]
+  * configure.ac:
+    - fix reliance on nss-config, which hinders cross-compilation
+
+  [ Marc Deslauriers ]
+  * src/utils/mount.ecryptfs_private.c:
+  * SECURITY UPDATE: wrong mtab ownership and permissions (LP: #830850)
+    - debian/patches/CVE-2011-3145.patch: also set gid and umask before
+      updating mtab in src/utils/mount.ecryptfs_private.c.
+    - CVE-2011-3145
+
+ -- Dustin Kirkland <kirkland@ubuntu.com>  Wed, 31 Aug 2011 16:45:39 -0500
+
+ecryptfs-utils (90) oneiric; urgency=low
+
+  [ Marc Deslauriers ]
+  * SECURITY UPDATE: privilege escalation via mountpoint race conditions
+    (LP: #732628)
+    - debian/patches/CVE-2011-1831,1832,1834.patch: chdir into mountpoint
+      before checking permissions in src/utils/mount.ecryptfs_private.c.
+    - CVE-2011-1831
+    - CVE-2011-1832
+  * SECURITY UPDATE: race condition when checking source during mount
+    (LP: #732628)
+    - debian/patches/CVE-2011-1833.patch: use new ecryptfs_check_dev_ruid
+      kernel option when mounting directory in
+      src/utils/mount.ecryptfs_private.c.
+    - CVE-2011-1833
+  * SECURITY UPDATE: mtab corruption via improper handling (LP: #732628)
+    - debian/patches/CVE-2011-1831,1832,1834.patch: modify mtab via a temp
+      file first and make sure it succeeds before replacing the real mtab
+      in src/utils/mount.ecryptfs_private.c.
+    - CVE-2011-1834
+  * SECURITY UPDATE: key poisoning via insecure temp directory handling
+    (LP: #732628)
+    - debian/patches/CVE-2011-1835.patch: make sure we don't copy into a
+      user controlled directory in src/utils/ecryptfs-setup-private.
+    - CVE-2011-1835
+  * SECURITY UPDATE: information disclosure via recovery mount in /tmp
+    (LP: #732628)
+    - debian/patches/CVE-2011-1836.patch: mount inside protected
+      subdirectory in src/utils/ecryptfs-recover-private.
+    - CVE-2011-1836
+  * SECURITY UPDATE: arbitrary file overwrite via lock counter race
+    condition (LP: #732628)
+    - debian/patches/CVE-2011-1837.patch: verify permissions with a file
+      descriptor, and don't follow symlinks in
+      src/utils/mount.ecryptfs_private.c.
+    - CVE-2011-1837
+
+ -- Dustin Kirkland <kirkland@ubuntu.com>  Wed, 10 Aug 2011 08:37:57 -0500
+
+ecryptfs-utils (89) oneiric; urgency=low
+
+  [ Dustin Kirkland ]
+  * debian/control:
+    - add missing build dependency needed for release
+  * doc/manpage/ecryptfs-wrap-passphrase.1: fix minor error in manpage
+  * src/desktop/ecryptfs-find, src/desktop/Makefile.am: LP: #799157
+    - add a tool, /usr/share/ecryptfs-utils/ecryptfs-find that can
+      help find cleartext/encrypted filenames by inode number
+  * src/desktop/ecryptfs-find:
+    - test file exists first; ditch the match;
+      search all ecryptfs mounts that user can read/traverse
+  * debian/ecryptfs-utils.links:
+    - add a symlink for Ubuntu
+  * scripts/release.sh:
+    - improve release script
+
+  [ Serge Hallyn ]
+  * Fix from Christophe Dumez: mount.ecryptfs_private: Do not attempt to
+    update mtab if it is a symbolic link.  (LP: #789888)
+
+ -- Dustin Kirkland <kirkland@ubuntu.com>  Tue, 19 Jul 2011 14:58:23 -0500
+
+ecryptfs-utils (88) oneiric; urgency=low
+
+  * src/utils/mount.ecryptfs_private.c:
+    - reduce the window size for the TOCTOU race;
+      does not entirely solve LP: #732628, which is going to need to be
+      fixed in the kernel with some heavy locking
+  * debian/control: update urls
+  * src/utils/ecryptfs-mount-private: LP: #725862
+    - fix ecryptfs-mount-private to insert only the fek, if filename
+      encryption is disabled
+
+ -- Dustin Kirkland <kirkland@ubuntu.com>  Mon, 14 Mar 2011 14:11:18 -0500
+
+ecryptfs-utils (87) natty; urgency=low
+
+  [ Paolo Bonzini <pbonzini@redhat.com> ]
+  * src/utils/ecryptfs-setup-private: update the Private.* selinux
+    contexts
+
+  [ Dustin Kirkland ]
+  * src/utils/ecryptfs-setup-private:
+    - add -p to mkdir, address noise for a non-error
+    - must insert keys during testing phase, since we remove keys on
+      unmount now, LP: #725862
+  * src/utils/ecryptfs_rewrap_passphrase.c: confirm passphrases in
+    interactive mode, LP: #667331
+
+ -- Dustin Kirkland <kirkland@ubuntu.com>  Wed, 02 Mar 2011 13:47:52 +0200
+
+ecryptfs-utils (86) natty; urgency=low
+
+  [ Jakob Unterwurzacher ]
+  * src/pam_ecryptfs/pam_ecryptfs.c: 
+    - check if this file exists and ask the user for the wrapping passphrase
+      if it does
+    - eliminate both ecryptfs_pam_wrapping_independent_set() and
+      ecryptfs_pam_automount_set() and replace with a reusable
+      file_exists_dotecryptfs() function
+
+  [ Serge Hallyn and Dustin Kirkland ]
+  * src/utils/mount.ecryptfs_private.c:
+    - support multiple, user configurable private directories by way of
+      a command line "alias" argument
+    - this "alias" references a configuration file by the name of:
+      $HOME/.ecryptfs/alias.conf, which is in an fstab(5) format,
+      as well as $HOME/.ecryptfs/alias.sig, in the same format as
+      Private.sig
+    - if no argument specified, the utility operates in legacy mode,
+      defaulting to "Private"
+    - rename variables, s/dev/src/ and s/mnt/dest/
+    - add a read_config() function
+    - add an alias char* to replace the #defined ECRYPTFS_PRIVATE_DIR
+    - this is half of the fix to LP: #615657
+  * doc/manpage/mount.ecryptfs_private.1: document these changes
+  * src/libecryptfs/main.c, src/utils/mount.ecryptfs_private.c:
+    - allow umount.ecryptfs_private to succeed when the key is no
+      longer in user keyring.
+
+ -- Dustin Kirkland <kirkland@ubuntu.com>  Thu, 24 Feb 2011 13:43:19 -0600
+
+ecryptfs-utils (85) released; urgency=low
+
+  [ Dustin Kirkland ]
+  * src/utils/ecryptfs-recover-private: clean sigs of invalid characters
+  * src/utils/mount.ecryptfs_private.c:
+    - fix bug LP: #313812, clear used keys on unmount
+    - add ecryptfs_unlink_sigs to the mount opts, so that unmounts from
+      umount.ecryptfs behave similarly
+    - use ecryptfs_remove_auth_tok_from_keyring() on the sig and sig_fnek
+
+  [ presgas@gmail.com ]
+  * src/utils/ecryptfs-migrate-home:
+    - support user databases outside of /etc/passwd, LP: #627506
+
+ -- Dustin Kirkland <kirkland@ubuntu.com>  Sat, 05 Feb 2011 19:37:32 -0700
+
+ecryptfs-utils (84) released; urgency=low
+
+  * src/desktop/ecryptfs-record-passphrase: fix typo, LP: #524139
+  * debian/rules, debian/control:
+    - disable the gpg key module, as it's not yet functional
+    - clean up unneeded build-deps
+    - also, not using opencryptoki either
+  * doc/manpage/ecryptfs.7: fix minor documentation bug, reported by
+    email by Jon 'maddog' Hall
+  * doc/manpage/ecryptfs-recover-private.1, doc/manpage/Makefile.am,
+    po/POTFILES.in, src/utils/ecryptfs-recover-private,
+    src/utils/Makefile.am: add a utility to simplify data recovery
+    of an encrypted private directory from a Live ISO, LP: #689969
+
+ -- Dustin Kirkland <kirkland@ubuntu.com>  Fri, 17 Dec 2010 20:12:47 -0600
+
+ecryptfs-utils (83) released; urgency=low
+
+  [ David Planella ]
+  * Makefile.am, configure.ac, debian/control, debian/po/POTFILES.sh,
+    debian/po/ecryptfs-utils.pot, debian/po/fr.po, debian/rules,
+    po/POTFILES.in, src/desktop/Makefile.am,
+    src/desktop/ecryptfs-mount-private.desktop,
+    src/desktop/ecryptfs-mount-private.desktop.in,
+    src/desktop/ecryptfs-record-passphrase,
+    src/desktop/ecryptfs-setup-private.desktop,
+    src/desktop/ecryptfs-setup-private.desktop.in:
+    - internationalization work for LP: #358283
+  * po/LINGUAS, po/ca.po: Catalan translation
+
+  [ Yan Li <yan.i.li@intel.com> ]
+  * src/pam_ecryptfs/pam_ecryptfs.c, src/utils/Makefile.am,
+    src/utils/ecryptfs-migrate-home: add a script and pam hooks to
+    support automatic migration to encrypted home directory
+
+  [ Dustin Kirkland ]
+  * src/utils/ecryptfs-migrate-home: clean up for merge
+    - use $() rather than ``
+    - drop set -u
+    - use = and !=, and quote vars, rather than testing with -ne, -eq,
+      for better shell portability
+    - improve usage statement and error text
+    - check if already encrypted
+    - handle migration of multiple users on boot
+    - fix all whitespace, use tabs for indents
+    - use quotes around variables, rather than ${} (stylistic preference)
+    - major simplification for immediate release
+      + remove boot and user modes; only support administrator mode for
+        security reasons and to avoid race conditions
+      + other modes can be re-added, if necessary, and if security
+        concerns can be addressed
+    - ensure running as root
+    - drop VERBOSE option, always print useful info messages
+    - call the user $USER_NAME rather than $USER_ID since id implies
+      number, and here we're deailing with names
+    - no decimals on awk calculation
+    - mktemp on the target user, not root
+    - check that there is enough disk space available to do the migration
+    - ensure the user's homedir group is correct
+    - add critical instructions, user *must* login after the migration and
+      before the reboot, as their wrapped passphrase will be cleared on
+      reboot (possible we should use an init script to move these to
+      /var/tmp on reboot)
+    - ensure permissions are set correctly
+    - improve text at the end of the migration, organize into notes
+  * ecryptfs-utils.ecryptfs-utils-restore.upstart,
+    ecryptfs-utils.ecryptfs-utils-save.upstart, rules:
+    - try to protect migrating users who don't login before the next reboot
+  * debian/ecryptfs-utils.install: install the locale messages
+  * src/desktop/ecryptfs-record-passphrase: improve dialog text
+  * src/desktop/ecryptfs-record-passphrase: revert the _ bit, as it's not quite
+    working yet, will need to talk to David to fix
+
+ -- Dustin Kirkland <kirkland@ubuntu.com>  Wed, 17 Feb 2010 15:16:05 -0600
+
+ecryptfs-utils (82) released; urgency=low
+
+  * src/utils/ecryptfs-setup-private: fix bug where setup-private
+    incorrectly assumed that the home/private dir ownerships should
+    be owned by USER:USER; instead, default to USER:GROUP, where
+    GROUP is the USER's primary group by default, LP: #445301
+  * src/utils/ecryptfs-setup-private, debian/control: LP: #456565
+    - fix typo, s/getext/gettext
+    - depend on gettext-base
+  * src/utils/ecryptfs-setup-private: fix printing of error strings,
+    which was broken by the gettext integration, LP: #471725;
+    in doing so, use $() in place of ``, use '' for gettext arguments,
+    and wrap gettext in "", like this: foo="$(gettext 'blah blah')"
+  * debian/control: one package per line, helps tremendously when looking
+    at diffs
+  * debian/copyright: Add new fields
+  * debian/ecryptfs-utils.postinst: minor set -e change
+
+
+ -- Dustin Kirkland <kirkland@ubuntu.com>  Tue, 10 Nov 2009 11:31:25 -0600
+
+ecryptfs-utils (81) released; urgency=low
+
+  [ Michael Terry ]
+  * src/utils/ecryptfs-setup=swap: clean up some error message reporting,
+    LP: #430891, #430890
+
+  [ Dustin Kirkland ]
+  * doc/manpage/ecryptfs.7: note the 64-char passphrase limit, LP: #386504
+  * src/utils/ecryptfs-setup-private: minor documentation change
+
+ -- Dustin Kirkland <kirkland@ubuntu.com>  Fri, 18 Sep 2009 18:46:07 -0500
+
+ecryptfs-utils (80) released; urgency=low
+
+  [ Evan Dandrea ]
+  * src/utils/ecryptfs-setup-swap: allow for setting up encrpyted swap,
+    without activating it immediately, necessary for livecd installations
+
+ -- Dustin Kirkland <kirkland@ubuntu.com>  Wed, 19 Aug 2009 11:31:03 -0500
+
+ecryptfs-utils (79) released; urgency=low
+
+  [ Dustin Kirkland ]
+  * debian/control: updated bzr and browser urls, bumped standards version
+  * src/pam_ecryptfs/pam_ecryptfs.c: silence useless, oft-shown info
+    message
+  * src/utils/ecryptfs-mount-private, src/utils/ecryptfs-rewrite-file,
+    src/utils/ecryptfs-setup-private, src/utils/ecryptfs-setup-swap,
+    src/utils/ecryptfs-umount-private: use gettext for all string printing,
+    such that we can internationalize ecryptfs
+  * po/POTFILES.sh, po/ecryptfs-utils.pot, po/fr.po, rules: add po to the
+    build system; for now, in the debian/ directory; this should be put in
+    the upstream source tree eventually (but I need some help with the
+    automake/autoconf integration)
+  * ecryptfs-setup-swap: exit(0) if there's no swaps to encrypt, ensures
+    that this script succeeds if there is no swap space that needs to be
+    secured, or if the existing swap space is already secured
+  * doc/manpage/ecryptfs-setup-swap.1, doc/manpage/ecryptfs-stat.1,
+    doc/manpage/umount.ecryptfs.8, doc/manpage/Makefile.am: added manpagess
+  * doc/manpage/ecryptfs.7: fix lintian warning
+  * debian/lintian/ecryptfs-utils: added a lintian overrides file
+  * debian/lintian/ecryptfs-utils, debian/ecryptfs-utils.install: add and
+    install some proper lintian overrides
+  * src/libecryptfs/module_mgr.c: fix typo, LP: #408437
+
+  [ Evan Dandrea ]
+  * ecryptfs-setup-swap: support more than one encrypted swap device
+
+  [ Dorin Scutarașu ]
+  * src/libecryptfs/key_management.c: fix null pointer deref, LP: #409565
+
+ -- Dustin Kirkland <kirkland@ubuntu.com>  Mon, 17 Aug 2009 11:58:35 -0500
+
+ecryptfs-utils (78) released; urgency=low
+
+  [ James Westby ]
+  * src/libecryptfs/main.c flockfile the filehandle after checking that
+    we were able to successfully open it (LP: #403011)
+  * debian/libecryptfs0.shlibs: bump shlibs dep to 77 since we added new
+    symbols there
+
+ -- Dustin Kirkland <kirkland@ubuntu.com>  Wed, 22 Jul 2009 11:28:20 -0500
+
+ecryptfs-utils (77) released; urgency=low
+
+  [ Dustin Kirkland ]
+  * src/libecryptfs/key_management.c, src/pam_ecryptfs/pam_ecryptfs.c:
+    revert the zombie code removal from pam_ecryptfs as it seems this
+    bit is still needed; fix the source of the problem introduced in
+    commit r407; check for non-zero return codes; this problem would
+    manifest itself as a) unable to unlock screensaver, b) unable to
+    switch users, c) unable to mount home folder on initial login;
+    LP: #402222, #402029
+  * src/utils/ecryptfs-umount-private: use for loop to loop over key
+    ids on removal
+  * src/utils/mount.ecryptfs_private.c: return non-zero on unmount failure
+    due to open sessions; handle this in ecryptfs-umount-private too; make
+    the flock() blocking; use /dev/shm for counter; add an iterator to the
+    counter file to prevent users from DoS'ing one another from accessing
+    their encrypted directories, LP: #402745
+  * debian/ecryptfs-utils.postinst: move /tmp counters to /dev/shm
+  * configure.ac: link against pam, silence shlib warning
+  * src/include/ecryptfs.h, src/libecryptfs/main.c,
+    src/pam_ecryptfs/pam_ecryptfs.c, src/utils/Makefile.am,
+    src/utils/mount.ecryptfs_private.c: move two functions from
+    mount.ecryptfs_private to libecryptfs, namely is_mounted() and
+    fetch_private_mnt(); use these in both pam_ecryptfs and
+    mount.ecryptfs_private; also move PRIVATE to ECRYPTFS_PRIVATE in
+    the ecryptfs.h headers; this will allow us to short-circuit some of the
+    costly key-loading code on pam_auth if the private dir is already
+    mounted, speeding up some subsequent authentications significantly,
+    LP: #402748
+  * doc/ecryptfs-mount-private.txt: removed the "$" to make copy-n-paste
+    more user friendly
+  * src/utils/ecryptfs-setup-private: when encrypting home, put the
+    .ecryptfs and .Private data in /home/.ecryptfs rather than /var/lib,
+    as users are forgetting to backup /var/lib, and are often putting
+    /home on a separate partition; furthermore, this gives users a place
+    to access their encrypted data for backup, rather than hiding the
+    data below $HOME, LP: #371719
+
+  [ Tyler Hicks ]
+  * src/libecryptfs/cipher_list.c, src/libecryptfs/module_mgr.c:
+    add blowfish/56-bytes to the list of ciphers we officially support,
+    LP: #402790
+
+ -- Dustin Kirkland <kirkland@ubuntu.com>  Tue, 21 Jul 2009 23:57:33 -0500
+
+ecryptfs-utils (76) released; urgency=low
+
+  [ Dustin Kirkland ]
+  * src/utils/ecryptfs-setup-swap: switch from vol_id to blkid,
+    LP: #376486
+  * debian/ecryptfs-utils.postinst, src/utils/ecryptfs-setup-private:
+    don't echo mount passphrase if running in bootstrap mode; prune
+    potential leakages from install log, LP: #383650
+  * SECURITY UPDATE: mount passphrase recorded in install log (LP: #383650).
+    - debian/ecryptfs-utils.postinst: prune private information from
+      installer log
+    - src/utils/ecryptfs-setup-private: don't echo passphrase if running in
+      bootstrap mode
+    - CVE-2009-1296
+  * src/utils/ecryptfs-setup-private: make some of the lanuage more readable,
+    (thanks, anrxc)
+  * README, configure.ac, debian/control, debian/rules,
+    doc/sourceforge_webpage/README, src/libecryptfs-swig/libecryptfs.py,
+    src/libecryptfs-swig/libecryptfs_wrap.c,
+    src/libecryptfs/key_management.c, src/libecryptfs/libecryptfs.pc.in,
+    src/libecryptfs/main.c, src/pam_ecryptfs/Makefile.am,
+    src/utils/manager.c, src/utils/mount.ecryptfs.c: move build from gcrypt
+    to nss (this change has been pending for some time)
+  * src/utils/ecryptfs-dot-private: dropped, was too hacky
+  * ecryptfs-mount-private.1, ecryptfs-setup-private.1: align the
+    documentation and implementation of the wrapping-independent feature,
+    LP: #383746
+  * src/utils/ecryptfs-umount-private: use keyctl list @u, since keyctl show
+    stopped working, LP: #400484, #395082
+  * src/utils/mount.ecryptfs_private.c: fix counter file locking; solves
+    a longstanding bug about "random" umount caused by cronjobs, LP: #358573
+
+  [ Michal Hlavinka (edits by Dustin Kirkland) ]
+  * doc/manpage/ecryptfs-mount-private.1,
+    doc/manpage/ecryptfs-rewrite-file.1,
+    doc/manpage/ecryptfs-setup-private.1, doc/manpage/ecryptfs.7,
+    doc/manpage/mount.ecryptfs_private.1,
+    doc/manpage/umount.ecryptfs_private.1: documentation updated to note
+    possible ecryptfs group membership requirements; Fix ecrypfs.7 man
+    page and key_mod_openssl's error message; fix typo
+  * src/libecryptfs/decision_graph.c: put a finite limit (5 tries) on
+    interactive input; fix memory leaks when asking questions
+  * src/libecryptfs/module_mgr.c: Don't error out with EINVAL when
+    verbosity=0 and some options are missing.
+  * src/utils/umount.ecryptfs.c: no error for missing key when removing it
+  * src/libecryptfs-swig/libecryptfs.i: fix compile werror, cast char*
+  * src/utils/ecryptfs_add_passphrase.c: fix/test/use return codes;
+    return nonzero for --fnek when not supported but used
+  * src/include/ecryptfs.h, src/key_mod/ecryptfs_key_mod_openssl.c,
+    src/libecryptfs/module_mgr.c: refuse mounting with too small rsa
+    key (key_mod_openssl)
+  * src/utils/ecryptfs_insert_wrapped_passphrase_into_keyring.c: fix return
+    codes
+  * src/utils/ecryptfs-rewrite-file: polish output
+  * src/libecryptfs/key_management.c: inform about full keyring; insert fnek
+    sig into keyring if fnek support check fails; don't fail if key already
+    exists in keyring
+  * src/utils/ecryptfs-setup-private: if the ecryptfs group exists, restrict
+    ecryptfs-setup-private to members of this group
+  * src/pam_ecryptfs/pam_ecryptfs.c: dynamically load ecryptfs module by
+    checking ecryptfs version
+  * src/libecryptfs/decision_graph.c, src/utils/io.c,
+    src/utils/mount.ecryptfs.c: fix EOF handling, LP: #371587
+  * src/desktop/Makefile.am: make desktop files trusted, LP: #371426
+
+  [ Dustin Kirkland and Daniel Baumann ]
+  * debian/control, debian/copyright, debian/ecryptfs-utils.dirs,
+    debian/ecryptfs-utils.install, debian/ecryptfs-utils.postinst,
+    debian/rules, ecryptfs-utils.pam-auth-update: sync Ubuntu's
+    packaging with Debian; drop dpatch, drop libssl build dep, clean
+    up extraneous debhelper bits, match cflags; remaining diff is only
+    ecryptfs-utils.prerm
+
+  [ Arfrever Frehtes Taifersar Arahesis ]
+  * key_mod/ecryptfs_key_mod_gpg.c,
+    key_mod/ecryptfs_key_mod_pkcs11_helper.c,
+    libecryptfs/key_management.c, utils/ecryptfs_unwrap_passphrase.c:
+    Fix warnings, initialize a few variables, drop unused ones
+
+  [ David Hicks ]
+  * src/lib/key_management.c: fix stray semicolon that prevents .ecryptfsrc
+    files from working properly, LP: #372709
+
+  [ Michael Rooney ]
+  * src/python/ecryptfsapi.py: added python api
+
+ -- Dustin Kirkland <kirkland@ubuntu.com>  Mon, 20 Jul 2009 12:12:30 -0500
+
+ecryptfs-utils (75) released; urgency=low
+
+  [ Dustin Kirkland ]
+  * debian/rules: drop hackery that moves stuff /usr/share/ecryptfs-utils
+  * src/utils/mount.ecryptfs_private.c: update inline documentation
+  * debian/changelog, src/libecryptfs/cmd_ln_parser.c,
+    src/libecryptfs/key_management.c, src/pam_ecryptfs/pam_ecryptfs.c,
+    src/utils/ecryptfs_add_passphrase.c,
+    src/utils/ecryptfs_insert_wrapped_passphrase_into_keyring.c,
+    src/utils/ecryptfs_rewrap_passphrase.c,
+    src/utils/ecryptfs_unwrap_passphrase.c,
+    src/utils/ecryptfs_wrap_passphrase.c: silence some useless logging,
+    LP: #313330
+  * include/ecryptfs.h, libecryptfs/key_management.c,
+    utils/ecryptfs_insert_wrapped_passphrase_into_keyring.c,
+    utils/ecryptfs_unwrap_passphrase.c: if the file to unwrap is
+    unspecified, try to use the default ~/.ecryptfs/wrapped-passphrase
+    before bailing out, LP: #359997
+  * src/utils/ecryptfs-setup-private: unix_chkpwd is not always present
+    (eg, gentoo), LP: #332341
+
+  [ Tyler Hicks ]
+  * doc/manpage/ecryptfs.7: ecryptfs_encrypted_view option desription
+    was wrong LP: #328761
+
+  [ Michal Hlavinka ]
+  * decision_graph.c: fix uninitialized return code
+  * mount.ecryptfs.c: don't pass verbosity option to kernel
+
+  [ anrxc & Dustin Kirkland ]
+  * doc/Makefile.am, src/desktop/Makefile.am: fix automake installation from
+    /usr/share to /usr/share/ecryptfs-utils
+
+  [ Daniel Baumann & Dustin Kirkland ]
+  * debian/rules, debian/control: sync differences between Debian & Ubuntu's
+    packaging
+
+  [ Arfrever Frehtes Taifersar Arahesis ]
+  * src/key_mod/ecryptfs_key_mod_gpg.c,
+    src/key_mod/ecryptfs_key_mod_pkcs11_helper.c: fix implicit declations
+
+  [ Frédéric Guihéry ]
+  * key_mod/ecryptfs_key_mod_tspi.c, utils/ecryptfs_generate_tpm_key.c:
+    the SRK password should be set to 20 bytes of NULL (wellknown
+    password), in order for different tools to request key protection
+    with the Storage Root Key
+
+ -- Dustin Kirkland <kirkland@ubuntu.com>  Fri, 01 May 2009 15:07:38 -0500
+
+ecryptfs-utils (74) released; urgency=low
+
+  [ Michal Hlavinka ]
+  * Changes for RH/Fedora release
+    - change error codes to be more descriptive
+    - decision_graph.h, *: change definition of node return codes to positive
+      values
+    - mount.ecryptfs.c: insist for yes/no answer for unkown sigs
+    - don't print error for removing key from keyring if it succeeded
+    - module_mgr.c: insist on yes/no answer
+    - use ECRYPTFS_NONEMPTY_VALUE_REQUIRED where reasonable
+    - pam_ecryptfs.c: don't try to unwrap key for users not using pam mounting
+    - add verbosity to man page
+    - decision_graph.* : add ECRYPTFS_NONEMPTY_VALUE_REQUIRED flag for nodes
+    - decision_graph.* : add WRONG_VALUE return code to nodes for asking
+      question again
+
+  [ Dustin Kirkland ]
+  * src/utils/ecryptfs-setup-private: fix bug in grep when running with LANG
+    in other locales, LP: #347969
+  * doc/manpage/ecryptfs.7: add notes about verbose option
+  * src/desktop: add the desktop files to the dist tarball
+  * src/utils/ecryptfs-dot-private: sourceable file for accessing your
+    encrypted data;  useful for conducting backups
+
+  [ Martin Pitt and Dustin Kirkland ]
+  Reworked the fixes for LP: #352307, remind user to record their passphrase
+  * src/desktop/ecryptfs-record-passphrase: run if
+    ~/.ecryptfs/.wrapped-passphrase.recorded does NOT exist; touch that
+    file upon successful run of unwrap passphrase
+  * debian/patches/00list,
+    debian/patches/update-notifier-remind-passphrase.dpatch: dropped, since
+    this was moved into PAM
+
+ -- Dustin Kirkland <kirkland@ubuntu.com>  Tue, 21 Apr 2009 18:21:30 -0500
+
+ecryptfs-utils (73-0ubuntu1) jaunty; urgency=low
+
+  [ Dustin Kirkland ]
+  Userspace fixes for LP: #345544, CVE-2009-0787
+  * src/utils/ecryptfs-rewrite-file: new script, to rewrite a file,
+    forcing it to be re-encrypted when written to disk
+  * doc/manpage/ecryptfs-rewrite-file.1: documentation added
+
+  Unrelated fixes in this release
+  * src/utils/ecryptfs-mount-private, src/utils/ecryptfs-setup-private,
+    src/utils/ecryptfs-setup-swap: use head/line for prompting and reading
+    input
+
+  [ Michal Hlavinka ]
+  * ecryptfs-setup-private: don't fail with syntax error when kernel
+    module not loaded
+  * *.desktop: make desktop files standards compliant
+  * umount.ecryptfs: don't sigsegv when arguments are missing
+
+ -- Dustin Kirkland <kirkland@ubuntu.com>  Fri, 20 Mar 2009 17:26:13 -0500
+
+ecryptfs-utils (72-0ubuntu1) jaunty; urgency=low
+
+  [ Dustin Kirkland ]
+  * src/utils/ecryptfs-[u]mount-private: print message about cd $PWD,
+    LP: #332331
+  * doc/manpage/*: manpage updates
+  * debian/ecryptfs-utils.prerm: prevent removal of ecryptfs-utils
+    package, if in use, LP: #331085
+  * src/utils/ecryptfs-setup-private:
+    - allow for LDAP-based logins, LP: #317307
+    - add --noautomount, --noautoumount options, LP: #301759
+
+  [ Tyler Hicks ]
+  * src/libecryptfs/cipher_list.c: ignore unknown ciphers, LP: #335632
+  * doc/manpage/ecryptfs.7: add key sig mount options info, LP: #329491
+  * src/utils/mount.ecryptfs.c: scrub unknown option
+
+  [ James Dupin ]
+  * doc/manpage/fr/*: initial cut at french manpages
+
+  [ Michal Hlavinka ]
+  * src/libecryptfs/module_mgr.c: fix mount parameter handling on
+    interactive mounting, LP: #331948
+
+ -- Dustin Kirkland <kirkland@ubuntu.com>  Wed, 18 Mar 2009 18:53:11 -0500
+
+ecryptfs-utils (71-0ubuntu1) jaunty; urgency=low
+
+  Upstream changes
+
+  [ Dustin Kirkland ]
+  * src/utils/ecryptfs-setup-swap: a first cut at a script that helps setup
+    encrypted swap
+  * debian/control: suggest cryptsetup
+
+  [ Michal Hlavinka ]
+  * improve interactive mode of mount.ecryptfs
+
+ -- Dustin Kirkland <kirkland@ubuntu.com>  Wed, 18 Feb 2009 17:34:17 -0600
+
+ecryptfs-utils (70-0ubuntu1) jaunty; urgency=low
+
+  * New upstream release, dropped all patches (included upstream)
+
+  [ Michal Hlavinka ]
+  * Auto module loading improvements
+  * Fix nss passphrase (un)wrapping
+  * Fix error handling when wrapping passphrase is too long
+  * Use %m instead of strerror(errno) everywhere
+  * Make the code compile with -Werror
+
+  [ Tyler Hicks ]
+  * umount.ecryptfs wrapper, clears keys
+
+  [ Dustin Kirkland ]
+  * Add a trailing newline to passphrase printing
+  * Hack around glibc/kernel mlock limit issue, LP: #329176
+
+ -- Dustin Kirkland <kirkland@ubuntu.com>  Fri, 13 Feb 2009 19:33:22 -0600
+
+ecryptfs-utils (69-0ubuntu2) jaunty; urgency=low
+
+  * debian/patches/10-remove-bashism.dpatch: fix installer bug, LP: #326184
+  * debian/control: Added libnss3-1d dependency (trying to cut over from
+    openssl linkage)
+
+ -- Dustin Kirkland <kirkland@ubuntu.com>  Fri, 06 Feb 2009 17:58:11 +0100
+
+ecryptfs-utils (69-0ubuntu1) jaunty; urgency=low
+
+  * New upstream release, dropped all patches (included upstream)
+  * This release includes support for filename encryption (LP: #264977)
+  * This release promotes keyutils from a 'recommends' to a 'depends,
+    for access to the keyctl command, which is used by the helper scripts
+    to clear the keyring on unmount (LP: #313812)
+
+ -- Dustin Kirkland <kirkland@ubuntu.com>  Mon, 26 Jan 2009 13:51:21 -0500
+
+ecryptfs-utils (68-1ubuntu2) jaunty; urgency=low
+
+  * debian/patches/05-mount_opts.dpatch: Clean up mount options, LP: #277723
+
+ -- Dustin Kirkland <kirkland@ubuntu.com>  Mon, 05 Jan 2009 15:34:05 -0600
+
+ecryptfs-utils (68-1ubuntu1) jaunty; urgency=low
+
+  * Merge from debian unstable (LP: #311193), remaining changes:
+    - debian/ecryptfs-utils.postinst: handle pam-auth-update
+    - debian/control: keep the dpatch build dep; libpam-runtime dep for
+      pam-auth-update
+    - debian/ecryptfs-utils.install: install the pam-auth-update file
+    - debian/rules:keep the dpatch infrastructure around as we'll likely need
+      it again; install the pam-auth-update file
+    - debian/ecryptfs-utils.pam-auth-update: pam stack configuration
+    - debian/ecryptfs-utils.dirs: usr share install dirs
+    - debian/ecryptfs-utils.prerm: remove pam-auth-update configuration
+  * Upstream merge also fixes LP: #304043.
+
+ -- Dustin Kirkland <kirkland@ubuntu.com>  Wed, 24 Dec 2008 10:24:53 -0600
+
+ecryptfs-utils (68-1) unstable; urgency=high
+
+  * Merging upstream version 68:
+    - Contains upstream changelog (Closes: #507942).
+    - Fixes syntax error in ecryptfs-setup-private (Closes: #509339).
+  * Updating rules to install changelog.
+
+ -- Daniel Baumann <daniel@debian.org>  Tue, 23 Dec 2008 08:04:00 +0100
+
+ecryptfs-utils (67-1ubuntu1) jaunty; urgency=low
+
+  * Merge from debian unstable, remaining changes (Debian Bug: #506172):
+    - debian/ecryptfs-utils.postinst: handle pam-auth-update
+    - debian/rules:keep the dpatch infrastructure around as we'll likely need
+      it again; install the pam-auth-update file
+    - debian/ecryptfs-utils.install: install the pam-auth-update file
+    - debian/control: keep the dpatch build dep; libpam-runtime dep for
+      pam-auth-update
+    - debian/ecryptfs-utils.pam-auth-update: pam stack configuration
+    - debian/ecryptfs-utils.dirs: usr share install dirs
+    - debian/ecryptfs-utils.prerm: remove pam-auth-update configuration
+  * Dropped changes
+    - debian/patches/10-counter_increment_fix.dpatch: included upstream
+    - debian/ecryptfs-mount-private.desktop: included upstream
+    - debian/ecryptfs-mount-private.txt: included upstream
+    - debian/rules: desktop, readme files installed by upstream
+    - debian/ecryptfs-utils.install: desktop, readme installed by upstream
+
+ -- Dustin Kirkland <kirkland@ubuntu.com>  Thu, 04 Dec 2008 12:09:35 -0600
+
+ecryptfs-utils (67-1) unstable; urgency=low
+
+  * Merging upstream version 67.
+
+ -- Daniel Baumann <daniel@debian.org>  Wed,  3 Dec 2008 09:54:00 +0100
+
+ecryptfs-utils (66-2ubuntu3) jaunty; urgency=low
+
+  * debian/patches/10-counter_increment_fix.dpatch: fix broken mount counter
+    for encrypted home users (LP: #301085).
+
+ -- Dustin Kirkland <kirkland@ubuntu.com>  Sat, 22 Nov 2008 14:59:52 -0600
+
+ecryptfs-utils (66-2ubuntu2) jaunty; urgency=low
+
+  * debian/control: depend on python-dev and swig to fix FTBFS (LP: #299888)
+  * debian/changelog: fix references to Debian bugs
+
+ -- Dustin Kirkland <kirkland@ubuntu.com>  Wed, 19 Nov 2008 07:09:19 -0600
+
+ecryptfs-utils (66-2ubuntu1) jaunty; urgency=low
+
+  * Merge from debian unstable,
+    (LP: #259631, #293433, #286265, #247421, #294888, #298421)
+  * Remaining changes:
+    - debian/ecryptfs-utils.postinst: handle pam-auth-update
+      (Debian Bug: #506172)
+    - debian/rules:
+      + keep the dpatch infrastructure around, as we'll likely
+        need it again at some point soon
+      + install the desktop, readme, and pam-auth-update files ()
+    - debian/ecryptfs-utils.install: install the desktop, readme shared files
+      (Debian Bug: #506172)
+    - debian/control:
+      + keep the dpatch build dep
+      + depend on libpam-runtime (Debian Bug: #506172)
+    - debian/ecryptfs-utils.prerm: remove pam-auth-update configuration
+      (Debian Bug: #506172)
+    - debian/ecryptfs-mount-private.txt: readme to install in unmounted
+      private dir (Debian Bug: #506172)
+    - debian/ecryptfs-mount-private.desktop: desktop link to install in
+      unmounted private dir (Debian Bug: #506172)
+    - debian/ecryptfs-utils.dirs: usr share install dirs (Debian Bug: #506172)
+    - debian/ecryptfs-utils.pam-auth-update: pam stack configuration
+      (Debian Bug: #506172)
+
+ -- Dustin Kirkland <kirkland@ubuntu.com>  Tue, 18 Nov 2008 22:55:19 -0600
+
+ecryptfs-utils (66-2) unstable; urgency=low
+
+  * Removing auth-client-config support, no longer used.
+  * Adding ecryptfs-utils recommends to keyutils.
+  * Building without ssl, ecryptfs_key_mod_openssl.c has incompatible
+    license (GPL-2+).
+  * Building without pkcs11 helper, ecryptfs_key_mod_pkcs11_helper.c
+    links against openssl and has incompatible license (GPL-2+).
+  * Building without pkcs11 helper, ecryptfs_key_mod_tspi.c links
+    against openssl and has incompatible license (GPL-2+).
+
+ -- Daniel Baumann <daniel@debian.org>  Tue, 18 Nov 2008 20:02:00 +0100
+
+ecryptfs-utils (66-1) unstable; urgency=low
+
+  * Manually adding second line of the commit message when merging
+    upstream version 65 to changelog.
+  * Merging upstream version 66.
+  * Adding ecryptfs-utils.postinst to create /var/lib/ecryptfs on
+    package installation time.
+
+ -- Daniel Baumann <daniel@debian.org>  Tue, 18 Nov 2008 12:39:00 +0100
+
+ecryptfs-utils (65-1) unstable; urgency=low
+
+  * Merging upstream version 65:
+    - Adds --wrapping option to ecryptfs-setup-private command to use an
+      independent wrapping passphrase, different from the login passphrase
+      (Closes: #505008).
+  * Removing pam-doc.dpatch, went upstream.
+  * Adding build-depends to swig.
+  * Adding build-depends to python-dev.
+  * Including python bindings in libecryptfs0.
+
+ -- Daniel Baumann <daniel@debian.org>  Sat, 15 Nov 2008 07:49:00 +0100
+
+ecryptfs-utils (64-3) unstable; urgency=low
+
+  * Replacing obsolete dh_clean -k with dh_prep.
+  * Adding patch from Osamu Aoki <osamu@debian.org> to update
+    ecryptfs-pam-doc.txt contents with s/Confidential/Private/
+    (Closes: #504934).
+  * Updating homepage and download location in control and copyright
+    (Closes: #504930).
+  * Updating author information in copyright.
+  * Installing desktop shortcut and readme to /usr/share/ecryptfs-utils.
+    Together with the fixes of upstream version 64, this interactively prompts
+    for passwords now (Closes: #504370).
+
+ -- Daniel Baumann <daniel@debian.org>  Sat,  8 Nov 2008 07:01:00 +0100
+
+ecryptfs-utils (64-2) unstable; urgency=low
+
+  * Adding build-depends to python (Closes: #504719).
+
+ -- Daniel Baumann <daniel@debian.org>  Thu,  6 Nov 2008 17:45:00 +0100
+
+ecryptfs-utils (64-1) unstable; urgency=low
+
+  * Removing sbin-path.dpatch, not needed anymore.
+  * Building with --enable-static, was default previously.
+
+ -- Daniel Baumann <daniel@debian.org>  Wed,  5 Nov 2008 20:45:00 +0100
+
+ecryptfs-utils (63-1) unstable; urgency=low
+
+  * Merging upstream version 63.
+
+ -- Daniel Baumann <daniel@debian.org>  Fri, 24 Oct 2008 06:42:00 +0200
+
+ecryptfs-utils (61-1) unstable; urgency=low
+
+  * Using patch-stamp rather than patch in rules file.
+  * Merging upstream version 61.
+  * Rediffing sbin-path.dpatch.
+
+ -- Daniel Baumann <daniel@debian.org>  Thu, 23 Oct 2008 19:42:00 +0200
+
+ecryptfs-utils (58-2) unstable; urgency=low
+
+  * Adding patch from situert <situert@yahoo.com> to call ecryptfs
+    helper scripts in /sbin with full path to avoid problem if /sbin is
+    not in PATH (Closes: #498543).
+
+ -- Daniel Baumann <daniel@debian.org>  Thu, 11 Sep 2008 08:11:00 +0200
+
+ecryptfs-utils (58-1) unstable; urgency=low
+
+  * Merging upstream version 58.
+
+ -- Daniel Baumann <daniel@debian.org>  Tue,  9 Sep 2008 07:08:00 +0200
+
+ecryptfs-utils (57-1) unstable; urgency=low
+
+  * Updating vcs fields in control file.
+  * Merging upstream version 57.
+
+ -- Daniel Baumann <daniel@debian.org>  Mon,  8 Sep 2008 13:44:00 +0200
+
+ecryptfs-utils (56-1) unstable; urgency=low
+
+  * Setting permissions for ecryptfs.acc when installing it in rules.
+  * Merging upstream version 56.
+
+ -- Daniel Baumann <daniel@debian.org>  Mon, 25 Aug 2008 01:25:00 +0200
+
+ecryptfs-utils (55-1) unstable; urgency=low
+
+  * Merging upstream version 55.
+
+ -- Daniel Baumann <daniel@debian.org>  Mon, 25 Aug 2008 01:19:00 +0200
+
+ecryptfs-utils (53-2) unstable; urgency=low
+
+  * Adding auth-client-config support, thanks to Dustin Kirkland
+    <kirkland@ubuntu.com>.
+
+ -- Daniel Baumann <daniel@debian.org>  Tue,  5 Aug 2008 23:59:00 +0200
+
+ecryptfs-utils (53-1ubuntu13) intrepid-proposed; urgency=low
+
+  Fixes for LP: #259631, add interactive mounting capability
+  * debian/rules, debian/ecryptfs-utils.dirs,
+    debian/ecryptfs-utils.install, debian/ecryptfs-mount-private.desktop,
+    debian/ecryptfs-mount-private.txt: install the new desktop shortcut
+    file and readme.txt to /usr/share/ecryptfs-utils
+  * debian/patches/60_interactive_mount.dpatch: modify ecryptfs-mount-private
+    utility to interactively prompt for password
+  * debian/patches/00list: updated accordingly
+
+ -- Dustin Kirkland <kirkland@ubuntu.com>  Tue, 04 Nov 2008 09:34:41 -0600
+
+ecryptfs-utils (53-1ubuntu12) intrepid-proposed; urgency=low
+
+  * debian/patches/55_check_password_and_remove_from_proc.dpatch:
+    use the printf function properly (LP: #290445)
+
+ -- Dustin Kirkland <kirkland@ubuntu.com>  Tue, 28 Oct 2008 16:50:11 -0500
+
+ecryptfs-utils (53-1ubuntu11) intrepid; urgency=low
+
+  * debian/patches/55_check_password_and_remove_from_proc.dpatch:
+    Fix ecryptfs-add-passphrase and ecryptfs-wrap-passphrase to take
+    passphrases on standard, to protect from disclosure on the process
+    table; fix callers in ecryptfs-setup-private (LP: #287908).
+    Validate that the user password is correct with unix_chkpwd (LP: #287906).
+  * debian/patches/00list: updated accordingly
+
+ -- Dustin Kirkland <kirkland@ubuntu.com>  Thu, 23 Oct 2008 12:53:30 -0500
+
+ecryptfs-utils (53-1ubuntu10) intrepid; urgency=low
+
+  [Dustin Kirkland]
+  * debian/patches/45-mount_private_counter.dpatch: implement a counter to
+    track mounts/unmounts of the private directory; unmount if the
+    counter is 0; allow a -f override to force unmount. LP: #259293.
+
+  [Steve Langasek]
+  * debian/patches/50-error-on-empty-password.dpatch: return
+    PAM_AUTHTOK_RECOVER_ERR from the password changing module if we
+    didn't get a password from the other modules in the stack, instead
+    of returning success.  LP: #272232.
+
+ -- Dustin Kirkland <kirkland@ubuntu.com>  Sun, 19 Oct 2008 10:30:08 -0500
+
+ecryptfs-utils (53-1ubuntu9) intrepid; urgency=low
+
+  * debian/patches/35-silence_useless_mount_messages.dpatch: silence error
+    messages (LP: #277343)
+  * debian/patches/40-zero_out_grep_options.dpatch: zero out GREP_OPTIONS
+    (LP: #257984)
+  * debian/patches/00list: updated accordingly
+
+ -- Dustin Kirkland <kirkland@ubuntu.com>  Fri, 03 Oct 2008 12:58:21 -0500
+
+ecryptfs-utils (53-1ubuntu8) intrepid; urgency=low
+
+  * debian/rules: change the installed permissions of pam-auth-update
+    config to r--r--r-- (LP: #260458).
+
+ -- Dustin Kirkland <kirkland@ubuntu.com>  Fri, 22 Aug 2008 18:45:09 +0100
+
+ecryptfs-utils (53-1ubuntu7) intrepid; urgency=low
+
+  * debian/00list: added 30-ecryptfs-setup-private_empty-dir-check.dpatch 
+    (LP: #260346).
+  * debian/30-ecryptfs-setup-private_empty-dir-check.dpatch: Patch checks that
+    ~/Private and ~/.Private are empty before proceeding.
+
+ -- Dustin Kirkland <kirkland@ubuntu.com>  Fri, 22 Aug 2008 12:16:50 +0100
+
+ecryptfs-utils (53-1ubuntu6) intrepid; urgency=low
+
+  * Fixes (LP: #259915).
+  * debian/control: drop suggests of auth-client-config, add depends on
+    libpam-runtime.
+  * debian/ecryptfs-utils.postinst: initial creation, use pam-auth-update,
+    be sure to 'force' if pam stack was precisely written by
+    auth-client-config.
+  * debian/ecryptfs-utils.prerm: remove pam-auth-update config on uninstall
+  * debian/ecryptfs-utils.pam-auth-update: initial creation of pam-auth-update
+    configuration.
+  * debian/ecryptfs.acc: drop auth-client-config profile.
+  * debian/rules, debian/ecryptfs-utils.install, debian/ecryptfs-utils.dirs:
+    remove auth-client-config installation, add pam-auth-update.
+
+ -- Dustin Kirkland <kirkland@ubuntu.com>  Fri, 22 Aug 2008 01:22:48 +0100
+
+ecryptfs-utils (53-1ubuntu5) intrepid; urgency=low
+
+  * debian/patches/00list: add 25-ecryptfs-setup-private_fix-pw-echo.dpatch
+    (LP: #259746).
+  * debian/patches/25-ecryptfs-setup-private_fix-pw-echo.dpatch: comment out
+    mostly-debugish echo's; conditionally print randomly generated passphrase;
+    always remind the user to print/record the mount passphrase for data
+    recovery.
+
+ -- Dustin Kirkland <kirkland@ubuntu.com>  Wed, 20 Aug 2008 23:20:36 +0100
+
+ecryptfs-utils (53-1ubuntu4) intrepid; urgency=low
+
+  * debian/patches/00list: add 20-ecryptfs-setup-private-force.dpatch.
+  * debian/patches/20-ecryptfs-setup-private-force.dpatch: error out if a
+    pre-existing ecryptfs setup is found, allow for a --force override,
+  * (LP: #258388). 
+
+ -- Dustin Kirkland <kirkland@ubuntu.com>  Fri, 15 Aug 2008 13:54:03 -0500
+
+ecryptfs-utils (53-1ubuntu3) intrepid; urgency=low
+
+  * debian/patches/00list: add 15-pam_ecryptfs-auth_fork_exit.dpatch.
+  * debian/patches/15-pam_ecryptfs-auth_fork_exit.dpatch: fix broken
+    exit condition causing screensaver unlocking to fail (LP: #255795).
+
+ -- Dustin Kirkland <kirkland@ubuntu.com>  Mon, 11 Aug 2008 13:50:59 -0500
+
+ecryptfs-utils (53-1ubuntu2) intrepid; urgency=low
+
+  * debian/control: add build dependency on dpatch.
+  * debian/rules: add relevant patch bits.
+  * debian/patches/00list: add 10-pam_ecryptfs-automount.dpatch.
+  * debian/patches/10-pam_ecryptfs-automount.dpatch: patch pam_ecryptfs to
+    respect ~/.ecryptfs/auto-mount and ~/.ecryptfs/auto-umount files
+    (LP: #256154).
+
+ -- Dustin Kirkland <kirkland@ubuntu.com>  Fri, 08 Aug 2008 13:00:53 -0500
+
+ecryptfs-utils (53-1ubuntu1) intrepid; urgency=low
+
+   * Merge from debian unstable (LP: #254714, #251245), remaining changes:
+    - debian/rules: install ecryptfs auth-client-config profile
+    - debian/control: Update maintainer, suggest auth-client-config
+    - debian/ecryptfs.acc: define auth-client-config profile
+    - debian/ecryptfs-utils.install: install auth-client-config profile
+   * Dropped changes:
+    - debian/ecryptfs-utils.dirs: handled by install -D rule
+   * Additional changes
+    - debian/ecryptfs.acc: Add to common-password stack, make all pam_ecryptfs
+      entries optional (LP: #253816).
+
+ -- Dustin Kirkland <kirkland@ubuntu.com>  Mon, 04 Aug 2008 15:58:24 -0500
+
+ecryptfs-utils (53-1) unstable; urgency=low
+
+  * Updating to install newly added manpages.
+  * Removing 01-manpage.dpatch, not required anymore.
+  * Merging upstream version 53.
+
+ -- Daniel Baumann <daniel@debian.org>  Sun,  3 Aug 2008 00:11:00 +0200
+
+ecryptfs-utils (52-1) unstable; urgency=low
+
+  * Merging upstream version 52.
+
+ -- Daniel Baumann <daniel@debian.org>  Fri,  1 Aug 2008 03:50:00 +0200
+
+ecryptfs-utils (51-1) unstable; urgency=low
+
+  * Merging upstream version 51.
+
+ -- Daniel Baumann <daniel@debian.org>  Fri,  1 Aug 2008 01:22:00 +0200
+
+ecryptfs-utils (50-4ubuntu2) intrepid; urgency=low
+
+   * debian/patches/00list, debian/patches/05-pam_ecryptfs_waitpid.dpatch:
+     Cherry pick this patch from upstream, which fixes gdm/kdm hangs on logout
+     (LP: #250988).
+
+ -- Dustin Kirkland <kirkland@ubuntu.com>  Tue, 22 Jul 2008 18:34:59 -0500
+
+ecryptfs-utils (50-4ubuntu1) intrepid; urgency=low
+
+   * Merge from debian unstable (LP: #249503), remaining changes:
+    - debian/control: Update maintainer, suggest auth-client-config
+    - debian/ecryptfs-utils.dirs: add etc/auth-client-config/profile.d
+    - debian/ecryptfs-utils.install: add ecryptfs auth-client-config profile
+    - debian/ecryptfs.acc: define auth-client-config profile
+    - debian/rules: support ecryptfs auth-client-config profile
+   * Dropped changes:
+    - debian/libecryptfs0.dirs: moved auth-client-config bit to
+      debian/ecryptfs-utils.dirs
+    - debian/libecryptfs.install: moved auth-client-config bit to
+      debian/ecryptfs-utils.install
+
+ -- Dustin Kirkland <kirkland@ubuntu.com>  Thu, 17 Jul 2008 10:39:51 -0500
+
+ecryptfs-utils (50-4) unstable; urgency=medium
+
+  * Adding /usr/lib/libecryptfs.so.0.0 symlink.
+  * Moving /lib/security/pam_ecryptfs.so and /usr/lib/ecryptfs/*.so from
+    libecryptfs0 to ecryptfs-utils.
+
+ -- Daniel Baumann <daniel@debian.org>  Wed, 16 Jul 2008 20:34:00 +0200
+
+ecryptfs-utils (50-3ubuntu1) intrepid; urgency=low
+
+  * Merge from debian unstable (LP: #248420), remaining changes:
+   - debian/libecryptfs0.install: add ecryptfs auth-client-config profile
+   - debian/rules: support ecryptfs auth-client-config profile
+   - debian/control: Update maintainer, suggest auth-client-config
+   - debian/libecryptfs0.dirs: add etc/auth-client-config/profile.d
+   - debian/ecryptfs.acc: define auth-client-config profile
+
+ -- Dustin Kirkland <kirkland@ubuntu.com>  Mon, 14 Jul 2008 09:48:23 -0500
+
+ecryptfs-utils (50-3) unstable; urgency=low
+
+  * Adding missing build-depends to pkg-config (Closes: #490415).
+
+ -- Daniel Baumann <daniel@debian.org>  Sat, 12 Jul 2008 11:12:00 +0200
+
+ecryptfs-utils (50-2) unstable; urgency=low
+
+  * Removing currently unused libgtk2.0-dev from build-depends (Closes:#490233).
+  * Building ecryptfs-utils with TPM support on all supported Debian
+    architectures, except s390.
+  * Installing /sbin/mount.ecryptfs_private with suid root.
+
+ -- Daniel Baumann <daniel@debian.org>  Thu, 10 Jul 2008 23:48:00 +0200
+
+ecryptfs-utils (50-1ubuntu1) intrepid; urgency=low
+
+  * auth-client-config support (LP: #247641)
+    + debian/ecryptfs.acc: create an auth-client-config profile
+    + debian/libecryptfs0.install: install the auth-client-config profile
+    + debian/control: modify maintainer value; add auth-client-config to
+      Suggests
+    + debian/libecryptfs0.dirs: create with etc/auth-client-config/profile.d
+
+ -- Dustin Kirkland <kirkland@ubuntu.com>  Fri, 11 Jul 2008 12:00:36 -0500
+
+ecryptfs-utils (50-1) unstable; urgency=low
+
+  * Merging upstream version 50.
+
+ -- Daniel Baumann <daniel@debian.org>  Sun, 29 Jun 2008 22:19:00 +0200
+
+ecryptfs-utils (49-1) unstable; urgency=low
+
+  * Merging upstream version 49.
+
+ -- Daniel Baumann <daniel@debian.org>  Sun, 29 Jun 2008 22:09:00 +0200
+
+ecryptfs-utils (48-1) unstable; urgency=medium
+
+  * Updating debhelper shlibs file.
+  * Updating rules fileto reflect upstreams removal of documentation.
+  * Merging upstream version 48.
+
+ -- Daniel Baumann <daniel@debian.org>  Mon, 16 Jun 2008 21:35:00 +0200
+
+ecryptfs-utils (47-1) unstable; urgency=low
+
+  * Merging upstream version 47.
+
+ -- Daniel Baumann <daniel@debian.org>  Mon, 16 Jun 2008 20:39:00 +0200
+
+ecryptfs-utils (46-1) unstable; urgency=low
+
+  * Removing superfluous empty line from rules file.
+  * Removing trailing slash in install debhelper file.
+  * Merging upstream version 46.
+  * Updating to standards 3.8.0.
+
+ -- Daniel Baumann <daniel@debian.org>  Tue, 10 Jun 2008 08:06:00 +0200
+
+ecryptfs-utils (45-1) unstable; urgency=low
+
+  * Merging upstream version 45.
+
+ -- Daniel Baumann <daniel@debian.org>  Fri, 16 May 2008 08:22:00 +0200
+
+ecryptfs-utils (44-1) unstable; urgency=low
+
+  * Reordering rules file.
+  * Updating debhelper shlibs file.
+  * Rewriting copyright file in machine-interpretable format.
+  * Adding vcs fields in control file.
+  * Upgrading package to debhelper 7.
+  * Merging upstream version 44.
+
+ -- Daniel Baumann <daniel@debian.org>  Sat,  3 May 2008 12:17:00 +0200
+
+ecryptfs-utils (43-1) unstable; urgency=low
+
+  * New upstream release.
+  * Removing watch file.
+
+ -- Daniel Baumann <daniel@debian.org>  Wed,  9 Apr 2008 09:54:00 +0200
+
+ecryptfs-utils (41-1) unstable; urgency=low
+
+  * New upstream release.
+
+ -- Daniel Baumann <daniel@debian.org>  Tue,  1 Apr 2008 11:25:00 +0200
+
+ecryptfs-utils (40-1) unstable; urgency=low
+
+  * New upstream release.
+
+ -- Daniel Baumann <daniel@debian.org>  Sun, 24 Feb 2008 22:09:00 +0100
+
+ecryptfs-utils (38-2) unstable; urgency=low
+
+  * Temporarily only use tpm toolchain on i386 (Closes: #461233).
+  * Current upstream should build without patches on amd64 (Closes: #445619).
+  * Added --fail-missing to dh_install call in rules.
+  * Updated .install files to cover additional files.
+
+ -- Daniel Baumann <daniel@debian.org>  Thu, 17 Jan 2008 23:47:00 +0100
+
+ecryptfs-utils (38-1) unstable; urgency=low
+
+  * New upstream release.
+
+ -- Daniel Baumann <daniel@debian.org>  Sat, 12 Jan 2008 17:14:00 +0100
+
+ecryptfs-utils (37-1) unstable; urgency=low
+
+  * New upstream release (Closes: #457316).
+  * Compling with trousers support now.
+  * Bumping to new policy.
+
+ -- Daniel Baumann <daniel@debian.org>  Fri, 21 Dec 2007 14:54:00 +0100
+
+ecryptfs-utils (30-1) unstable; urgency=low
+
+  * New upstream release.
+
+ -- Daniel Baumann <daniel@debian.org>  Fri, 16 Nov 2007 12:10:00 +0100
+
+ecryptfs-utils (27-1) unstable; urgency=low
+
+  * New upstream release.
+
+ -- Daniel Baumann <daniel@debian.org>  Fri, 19 Oct 2007 21:50:00 +0200
+
+ecryptfs-utils (26-1) unstable; urgency=low
+
+  * New upstream release.
+  * Dropped 02-ia64.dpatch; not required anymore.
+  * Building with --disable-tspi for the time beeing until trousers is
+    uploaded.
+  * Downgrading recommends to opencryptoki to a suggests for the time beeing
+    until opencryptoki is uploaded.
+
+ -- Daniel Baumann <daniel@debian.org>  Sun, 14 Oct 2007 11:17:00 +0200
+
+ecryptfs-utils (24-2) unstable; urgency=low
+
+  * Enforcing libdir (Closes: #445619).
+
+ -- Daniel Baumann <daniel@debian.org>  Wed, 10 Oct 2007 23:41:00 +0200
+
+ecryptfs-utils (24-1) unstable; urgency=low
+
+  * New upstream release.
+
+ -- Daniel Baumann <daniel@debian.org>  Tue,  9 Oct 2007 12:03:00 +0200
+
+ecryptfs-utils (23-1) unstable; urgency=low
+
+  * New upstream release.
+  * Added libgpgme11-dev to build-depends.
+  * Rediffed 02-ia64.dpatch.
+
+ -- Daniel Baumann <daniel@debian.org>  Mon, 27 Aug 2007 16:32:00 +0200
+
+ecryptfs-utils (21-1) unstable; urgency=low
+
+  * Initial release (Closes: #401800).
+  * Added patch from William Lima <wlima.amadeus@gmail.com> to fix FTBFS on
+    ia64.
+
+ -- Daniel Baumann <daniel@debian.org>  Sun, 12 Aug 2007 15:20:00 +0200
+

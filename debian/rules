@@ -1,0 +1,51 @@
+#!/usr/bin/make -f
+
+DEB_BUILD_ARCH ?= $(shell dpkg-architecture -qDEB_BUILD_ARCH)
+
+ifneq ($(DEB_BUILD_ARCH),s390)
+	TPMFLAGS = --enable-opencryptoki
+endif
+
+export DEB_CFLAGS_MAINT_APPEND = -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
+
+%:
+	dh ${@} --with autoreconf,python2
+
+override_dh_autoreconf:
+	dh_autoreconf ./autogen.sh
+
+override_dh_auto_configure:
+	dh_auto_configure -- --enable-static --disable-gpg --enable-nss  --disable-gui --enable-pam --disable-openssl --disable-pkcs11-helper --disable-tspi $(TPMFLAGS) $(shell dpkg-buildflags --export=configure)
+
+override_dh_auto_install:
+	dh_auto_install
+
+	install -D -m 0644 debian/local/ecryptfs-utils.pam-auth-update debian/ecryptfs-utils/usr/share/pam-configs/ecryptfs-utils
+
+	# Removing useless files
+	find debian/tmp -name "*.pyc" | xargs rm -f
+
+	rm -f debian/tmp/usr/lib/*.la
+
+	rm -f debian/tmp/usr/lib/python*/dist-packages/ecryptfs-utils/*.la
+	rm -f debian/tmp/usr/lib/python*/dist-packages/ecryptfs-utils/*.a
+
+override_dh_builddeb:
+	dh_builddeb -- -Zgzip -z9
+
+override_dh_fixperms:
+	dh_fixperms
+
+	chmod 4755 debian/ecryptfs-utils/sbin/mount.ecryptfs_private
+
+override_dh_install:
+	# Removing translation markers to work as an update-notifier hook
+	sed -i 's/^_//' debian/tmp/usr/share/ecryptfs-utils/ecryptfs-record-passphrase
+
+	dh_install --fail-missing --sourcedir=debian/tmp
+
+override_dh_python2:
+	dh_python2 --no-guessing-versions
+
+override_dh_strip:
+	dh_strip --dbg-package=ecryptfs-utils-dbg
