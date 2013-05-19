@@ -3,6 +3,7 @@ AUTOMAKE_OPTIONS = subdir-objects
 dist_noinst_DATA = tests.rc
 
 dist_noinst_SCRIPTS = directory-concurrent.sh \
+					ecb-mount.sh \
 		      enospc.sh \
 		      extend-file-random.sh \
 		      file-concurrent.sh \
