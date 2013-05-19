@@ -469,6 +469,9 @@ etl_mount_i()
 			export ETL_MOUNT_OPTS=$(eval "echo $default_mount_opts")
 		fi
 	fi
+
+  # XXX: Remove this
+  echo "Mounting With option... $default_mount_opts"
 	
 	mount -it ecryptfs -o "$ETL_MOUNT_OPTS" \
 		"$ETL_MOUNT_SRC" "$ETL_MOUNT_DST"
