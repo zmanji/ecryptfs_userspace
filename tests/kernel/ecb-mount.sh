@@ -26,6 +26,10 @@ rc=1
 
 test_cleanup()
 {
+  etl_remove_test_dir $test_dir
+  etl_umount
+  etl_lumount
+  etl_unlink_keys
 	exit $rc
 }
 trap test_cleanup 0 1 2 3 15
@@ -34,7 +38,10 @@ trap test_cleanup 0 1 2 3 15
 
 etl_add_keys || exit
 etl_lmount || exit
+# TODO: Simplify this.
 default_mount_opts="rw,relatime,ecryptfs_cipher=aes,ecryptfs_cipher_mode=ecb,ecryptfs_key_bytes=16,ecryptfs_sig=\${ETL_FEKEK_SIG}"
+default_fne_mount_opts="${default_mount_opts},ecryptfs_fnek_sig=\${ETL_FNEK_SIG}"
+export ETL_MOUNT_OPTS=$(eval "echo $default_mount_opts")
 etl_mount_i || exit
 test_dir=$(etl_create_test_dir) || exit
 
