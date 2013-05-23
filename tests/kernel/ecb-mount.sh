@@ -57,6 +57,15 @@ if [ $? -ne 0 ]; then
 	rc=1
 fi
 
+etl_umount
+
+etl_mount_i || exit
+
+cat $test_dir/testfile > /dev/null
+if [ $? -ne 0 ]; then
+	rc=1
+fi
+
 rm $test_dir/testfile
 if [ $? -ne 0 ]; then
 	rc=1
