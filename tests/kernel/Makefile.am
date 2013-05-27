@@ -7,6 +7,7 @@ dist_noinst_SCRIPTS = directory-concurrent.sh \
 		      enospc.sh \
 		      extend-file-random.sh \
 		      file-concurrent.sh \
+					gcm.sh \
 		      inode-race-stat.sh \
 		      inotify.sh \
 		      link.sh \
