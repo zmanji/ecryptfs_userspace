@@ -32,9 +32,8 @@ default_lmount_opts="rw,relatime"
 default_ext2_opts="user_xattr,acl"
 default_ext3_opts="user_xattr,acl,commit=600,barrier=1,data=ordered"
 default_btrfs_opts="nodatacow"
-default_mount_opts="rw,relatime,ecryptfs_cipher=aes,ecryptfs_key_bytes=16,ecryptfs_sig=\${ETL_FEKEK_SIG}"
+default_mount_opts="rw,relatime,ecryptfs_cipher=aes,ecryptfs_key_bytes=16,ecryptfs_sig=\${ETL_FEKEK_SIG}${ETL_EXTRA_MOUNT_FLAGS}"
 default_fne_mount_opts="${default_mount_opts},ecryptfs_fnek_sig=\${ETL_FNEK_SIG}"
-
 
 #
 # etl_add_fekek_passphrase [PASS] [SALT_HEX]
