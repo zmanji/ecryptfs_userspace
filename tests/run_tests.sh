@@ -159,9 +159,10 @@ usage()
 	echo "  -t tests	comma-separated list of tests to run"
 	echo "  -U		run tests relating to the userspace utilities"
 	echo "  -u upper_mnt	destination path to mount upper filesystem"
+	echo "  -o flags	extra mount options to be passed to ecryptfs"
 }
 
-while getopts "b:c:D:d:f:hKl:t:Uu:" opt; do
+while getopts "b:c:D:d:f:hKl:t:Uu:o:" opt; do
 	case $opt in
 	b)
 		blocks=$OPTARG
@@ -197,6 +198,9 @@ while getopts "b:c:D:d:f:hKl:t:Uu:" opt; do
 		;;
 	u)
 		upper_mnt=$OPTARG
+		;;
+	o)
+		extra_flags=$OPTARG
 		;;
 	\?)
 		usage 1>&2
@@ -299,6 +303,12 @@ if [ -z "$upper_mnt" ]; then
 	fi
 fi
 export ETL_MOUNT_DST=$upper_mnt
+
+if [ -n "$extra_flags" ] ; then
+	export ETL_EXTRA_MOUNT_FLAGS=",${extra_flags}"
+else
+	export ETL_EXTRA_MOUNT_FLAGS=""
+fi
 
 # Source in the kernel and/or userspace tests.rc files to build the test lists
 categories=$(echo $categories | tr ',' ' ')
